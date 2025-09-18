@@ -19,8 +19,8 @@ function Signin() {
       const data = await res.json();
 
       if (res.ok && data.token) {
-        localStorage.setItem("token", data.token);
-        navigate("/dashboard"); // redirect to dashboard
+        localStorage.setItem("token", data.token); // ✅ store token
+        navigate("/dashboard"); // redirect
       } else {
         alert(data.message || "Login failed");
       }

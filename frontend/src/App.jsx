@@ -4,8 +4,9 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Signup from "./pages/Signup";
 import Signin from "./pages/SignIn";
-import Dashboard from "./pages/Dashboard";
+// import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminDashboard from "./components/admin/adminDashboard";
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <AdminDashboard />
             </ProtectedRoute>
           }
         />

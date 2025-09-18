@@ -7,24 +7,23 @@ function ProtectedRoute({ children }) {
   useEffect(() => {
     const verifyToken = async () => {
       const token = localStorage.getItem("token");
+
       if (!token) {
         setIsAuth(false);
         return;
       }
 
       try {
-        const res = await fetch("http://localhost:3000/api/admin/verifyAdmin", {
+        const res = await fetch("http://localhost:3000/api/admin/verify", {
           method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ send token in header
+          },
         });
 
-        if (res.ok) {
-          setIsAuth(true);
-        } else {
-          localStorage.removeItem("token");
-          setIsAuth(false);
-        }
+        setIsAuth(res.ok);
       } catch (err) {
+        console.error("Token verification error", err);
         setIsAuth(false);
       }
     };
@@ -32,7 +31,7 @@ function ProtectedRoute({ children }) {
     verifyToken();
   }, []);
 
-  if (isAuth === null) return <div>Loading...</div>; // wait until check is done
+  if (isAuth === null) return <div>Checking authentication...</div>;
 
   return isAuth ? children : <Navigate to="/signin" replace />;
 }
