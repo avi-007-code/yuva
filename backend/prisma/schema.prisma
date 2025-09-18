@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -15,30 +14,39 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
   name         String
   email        String   @unique
   password     String
   role         Role     @default(MEMBER)
-  clubs        Club[]   @relation("ClubMembers")   // if user joins clubs
-  createdClubs Club[]   @relation("ClubOwner")     // if user is club manager
+  createdClubs Club[]   @relation("ClubOwner")
+  memberships  Membership[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
 
 model Club {
-  id          String   @id @default(uuid())
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String?
-  createdBy   User     @relation("ClubOwner", fields: [createdById], references: [id])
-  createdById String
-  members     User[]   @relation("ClubMembers")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdBy   User          @relation("ClubOwner", fields: [createdById], references: [id])
+  createdById String        @db.ObjectId
+  members     Membership[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Membership {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String @db.ObjectId
+  club    Club   @relation(fields: [clubId], references: [id])
+  clubId  String @db.ObjectId
+  joinedAt DateTime @default(now())
 }
 
 enum Role {
   ADMIN
-  CLUB   // for club managers
-  MEMBER // regular users
+  CLUB
+  MEMBER
 }
