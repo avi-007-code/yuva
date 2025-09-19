@@ -2,7 +2,6 @@ const { prisma } = require("../config/db")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const dotenv = require("dotenv")
-const db = require("mongodb")
 
 dotenv.config()
 
@@ -45,5 +44,3 @@ exports.adminLogin = async (req,res) =>{
     }
 
 }
-
-// Additional admin controller functions would go here (viewUsers, viewClubs, createClub, etc.)
