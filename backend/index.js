@@ -10,7 +10,7 @@ const {connectDB,prisma} =require('./config/db');
 connectDB();
 
 const adminRouter = require('./routes/adminRoutes');
-// const clubRouter =require('./routes/clubRoutes');
+const clubRouter =require('./routes/clubRoutes');
 // const memberRouter = require('./routes/memberRoutes')
 
 
@@ -26,7 +26,7 @@ app.get('/',(req,res)=>{
 
 app.use('/api/admin',adminRouter)
 // app.use('/api/member',memberRouter)
-// app.use('/api/club',clubRouter)
+app.use('/api/club',clubRouter)
 
 const PORT = process.env.PORT;
 app.listen(PORT,()=>{
