@@ -4,6 +4,7 @@ import {
   IoPersonCircleOutline,
   IoEllipsisVertical,
 } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 export default function UserDashboard() {
   const [notifications] = useState([
@@ -19,6 +20,8 @@ export default function UserDashboard() {
   const bellRef = useRef(null);
   const menuRef = useRef(null);
   const dotsRef = useRef(null);
+
+  const navigate = useNavigate ();  
 
   // ✅ independent close on outside click
   useEffect(() => {
@@ -104,15 +107,15 @@ export default function UserDashboard() {
                 className="absolute right-0 top-11 w-40 bg-white text-black shadow-lg rounded-lg border border-gray-200 z-50"
               >
                 <ul className="flex flex-col text-sm">
-                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2">
+                  <button onClick={()=>navigate('/userprofile')} className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2">
                     <IoPersonCircleOutline className="text-lg" /> My Profile
-                  </li>
-                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                  </button>
+                  <button className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                     Settings
-                  </li>
-                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-red-600">
+                  </button>
+                  <button onClick={() => navigate('/signin')} className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-red-600">
                     Logout
-                  </li>
+                  </button>
                 </ul>
               </div>
             )}

@@ -8,10 +8,11 @@ import Signin from "./pages/SignIn";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminDashboard from "./components/admin/adminDashboard";
 import UserDashboard from "./components/user/UserDashboard";
+import UserProfile from "./components/user/UserProfile";
 
 function App() {
 
-  const hideNavbarRoutes=["/userdashboard"]
+  const hideNavbarRoutes=["/userdashboard","/userprofile"]
   
   return (
     <Router>
@@ -29,6 +30,7 @@ function App() {
           }
         />
         <Route path="/userdashboard"  element={<UserDashboard />}/>
+        <Route path="/userprofile" element={<UserProfile />}/>
       </Routes>
     </Router>
   );
