@@ -7,6 +7,7 @@ import Signin from "./pages/SignIn";
 // import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminDashboard from "./components/admin/adminDashboard";
+import UserDashboard from "./components/user/UserDashboard";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/userdashboard"  element={<UserDashboard />}/>
       </Routes>
     </Router>
   );
