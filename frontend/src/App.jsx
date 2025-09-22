@@ -10,9 +10,12 @@ import AdminDashboard from "./components/admin/adminDashboard";
 import UserDashboard from "./components/user/UserDashboard";
 
 function App() {
+
+  const hideNavbarRoutes=["/userdashboard"]
+  
   return (
     <Router>
-      <Navbar />
+      {!hideNavbarRoutes.includes(location.pathname) && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />

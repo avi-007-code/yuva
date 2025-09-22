@@ -5,7 +5,7 @@ import {
   IoEllipsisVertical,
 } from "react-icons/io5";
 
-export default function UserDashboard () {
+export default function UserDashboard() {
   const [notifications] = useState([
     "New event added in Spoorthi 🎉",
     "Kruthi Club meeting tomorrow at 5 PM",
@@ -53,74 +53,70 @@ export default function UserDashboard () {
       <div className="flex items-center justify-between bg-indigo-600 px-6 py-4 shadow-md relative">
         <h1 className="text-xl font-bold text-white">User Dashboard</h1>
 
-        <div className="flex items-center space-x-6 text-white relative">
-          {/* Bell Icon */}
-          <div
-            ref={bellRef}
-            className="relative cursor-pointer"
-            onClick={() => setShowPanel((prev) => !prev)}
-          >
-            <IoNotificationsOutline className="text-2xl" />
+        <div className="flex items-center space-x-6 text-white">
+          {/* Bell Icon + Dropdown */}
+          <div ref={bellRef} className="relative">
+            <IoNotificationsOutline
+              className="text-2xl cursor-pointer"
+              onClick={() => setShowPanel((prev) => !prev)}
+            />
             {notifications.length > 0 && (
               <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500"></span>
             )}
+
+            {showPanel && (
+              <div
+                ref={panelRef}
+                className="absolute right-0 top-11 w-72 bg-white text-black shadow-lg rounded-lg border border-gray-200 z-50"
+              >
+                <div className="p-3 border-b font-semibold text-gray-700">
+                  Notifications
+                </div>
+                <div className="max-h-60 overflow-y-auto">
+                  {notifications.length > 0 ? (
+                    notifications.map((note, idx) => (
+                      <div
+                        key={idx}
+                        className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer border-b last:border-none"
+                      >
+                        {note}
+                      </div>
+                    ))
+                  ) : (
+                    <p className="p-4 text-gray-500 text-sm">
+                      No new notifications
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Notification dropdown */}
-          {showPanel && (
-            <div
-              ref={panelRef}
-              className="absolute right-12 top-12 w-72 bg-white text-black shadow-lg rounded-lg border border-gray-200 z-50"
-            >
-              <div className="p-3 border-b font-semibold text-gray-700">
-                Notifications
+          {/* Three Dots Menu + Dropdown */}
+          <div ref={dotsRef} className="relative">
+            <IoEllipsisVertical
+              className="text-2xl cursor-pointer"
+              onClick={() => setShowMenu((prev) => !prev)}
+            />
+            {showMenu && (
+              <div
+                ref={menuRef}
+                className="absolute right-0 top-11 w-40 bg-white text-black shadow-lg rounded-lg border border-gray-200 z-50"
+              >
+                <ul className="flex flex-col text-sm">
+                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2">
+                    <IoPersonCircleOutline className="text-lg" /> My Profile
+                  </li>
+                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                    Settings
+                  </li>
+                  <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-red-600">
+                    Logout
+                  </li>
+                </ul>
               </div>
-              <div className="max-h-60 overflow-y-auto">
-                {notifications.length > 0 ? (
-                  notifications.map((note, idx) => (
-                    <div
-                      key={idx}
-                      className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer border-b last:border-none"
-                    >
-                      {note}
-                    </div>
-                  ))
-                ) : (
-                  <p className="p-4 text-gray-500 text-sm">
-                    No new notifications
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Three Dots Menu */}
-          <div
-            ref={dotsRef}
-            className="cursor-pointer"
-            onClick={() => setShowMenu((prev) => !prev)}
-          >
-            <IoEllipsisVertical className="text-2xl" />
+            )}
           </div>
-
-          {showMenu && (
-            <div
-              ref={menuRef}
-              className="absolute right-0 top-12 w-40 bg-white text-black shadow-lg rounded-lg border border-gray-200 z-50"
-            >
-              <ul className="flex flex-col text-sm">
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2">
-                  <IoPersonCircleOutline className="text-lg" /> My Profile
-                </li>
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                  Settings
-                </li>
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-red-600">
-                  Logout
-                </li>
-              </ul>
-            </div>
-          )}
         </div>
       </div>
 
