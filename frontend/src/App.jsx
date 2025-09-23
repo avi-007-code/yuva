@@ -12,7 +12,7 @@ import UserProfile from "./components/user/UserProfile";
 
 function App() {
 
-  const hideNavbarRoutes=["/userdashboard","/userprofile"]
+  const hideNavbarRoutes=["/userdashboard","/userprofile","/dashboard"]
   
   return (
     <Router>

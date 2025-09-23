@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 export default function UserProfile() {
   // Example user data (later you can fetch from backend)
   const user = {
-    name: "Hemanth Pinneboyina",
-    email: "hemanth@example.com",
+    name: "Hemanth",
+    email: "hemanth@gmail.com",
     joinedClubs: ["Spoorthi", "Prakruthi"],
     bio: "Tech enthusiast and active member of multiple clubs.",
   };

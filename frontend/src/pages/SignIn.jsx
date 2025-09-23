@@ -17,7 +17,7 @@ function Signin() {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:3000/api/admin/login", {
+      const res = await fetch(`http://localhost:3000/api/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -47,6 +47,8 @@ function Signin() {
             <input
               type="email"
               name="email"
+              value={email}
+              onChange={(e)=>setEmail(e.target.value)}
               className="text-lg px-4 py-2 border rounded-lg border-gray-300"
               placeholder="Enter your Email"
             />
@@ -57,13 +59,15 @@ function Signin() {
             <input
               type={show ? "text":"password"}
               name="password"
+              value={password}
+              onChange={(e)=>setPassword(e.target.value)}
               className="text-lg px-4 py-2 border rounded-lg border-gray-300"
               placeholder="Enter Your Password"
             />
             <p onClick={handleClick} className="text-black-800 text-xl absolute ml-90 mt-13 cursor-pointer">{show ? <IoEyeOutline />:<IoEyeOffOutline />}</p>
           </div>
 
-          <button className="bg-indigo-600 rounded-lg px-3 hover:cursor-pointer py-2 text-white font-medium hover:bg-indigo-500 transition">
+          <button onClick={handleSignin} className="bg-indigo-600 rounded-lg px-3 hover:cursor-pointer py-2 text-white font-medium hover:bg-indigo-500 transition">
             Login
           </button>
           <div className="flex p-2 gap-35">
