@@ -17,6 +17,8 @@ const adminRouter = require('./routes/adminRoutes');
 
 app.use(cookieParser());
 app.use(express.json());  // Middleware to parse JSON request bodies
+
+app.use(cookieParser());
 app.use(cors({
     origin: "http://localhost:5173"
 }))
