@@ -15,7 +15,7 @@ const adminRouter = require('./routes/adminRoutes');
 // const memberRouter = require('./routes/memberRoutes')
 
 
-
+app.use(cookieParser());
 app.use(express.json());  // Middleware to parse JSON request bodies
 
 app.use(cookieParser());
