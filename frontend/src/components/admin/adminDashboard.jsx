@@ -1,14 +1,6 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/signin');
-  };
-
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-blue-600 text-white py-4 px-6">
@@ -17,9 +9,23 @@ const AdminDashboard = () => {
       <div className="flex">
         <nav className="w-1/4 bg-white shadow-md p-4">
           <ul className="space-y-4">
-            <li className="text-blue-600 font-semibold">Home</li>
-            <li className="text-gray-700">Users</li>
-            <li className="text-gray-700">Settings</li>
+            <li className="text-blue-600 font-semibold">
+              <a href="/admin/view-all-users">View Users</a>
+            </li>
+            <li className="text-blue-600 font-semibold">
+              <a href="/admin/view-all-clubs">View All Clubs</a>
+            </li>
+            
+            <li className="text-blue-600 font-semibold">
+              <a href="/admin/view-club">View A Club</a>
+            </li>
+
+            <li className="text-blue-600 font-semibold">
+              <a href="/admin/delete-user">Delete User</a>
+            </li>
+            <li className="text-blue-600 font-semibold">
+              <a href="/admin/delete-club">Delete Club</a>
+            </li>
           </ul>
         </nav>
         <main className="flex-1 p-6">
@@ -43,15 +49,6 @@ const AdminDashboard = () => {
               <button className="bg-blue-600 text-white px-4 py-2 rounded shadow">Manage Posts</button>
             </div>
           </section>
-          <div className="p-6 text-center">
-            <p className="mt-2 text-gray-600">Welcome, you are logged in with JWT!</p>
-            <button
-              onClick={handleLogout}
-              className="mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
-            >
-              Logout
-            </button>
-          </div>
         </main>
       </div>
     </div>

@@ -70,4 +70,3 @@ exports.deleteClub = async (req, res) => {
         res.status(400).send({ status: false , message: error.message });
     }
 };
-

@@ -24,7 +24,7 @@ function Signin() {
 
       if (res.ok && data.token) {
         localStorage.setItem("token", data.token); // ✅ store token
-        navigate("/dashboard"); // redirect
+        navigate("/admin/dashboard"); // redirect
       } else {
         alert(data.message || "Login failed");
       }

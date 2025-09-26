@@ -1,32 +1,37 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import Signup from "./pages/Signup";
-import Signin from "./pages/SignIn";
-// import Dashboard from "./pages/Dashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
 import AdminDashboard from "./components/admin/adminDashboard";
-import UserDashboard from "./components/user/UserDashboard";
+import ViewUser from "./components/admin/ViewUser";
+import ViewAllUsers from "./components/admin/ViewAllUsers";
+import { useState } from 'react'
+import Homepage from "./pages/Homepage";
+import Signin from "./pages/SignIn";
+import Signup from "./pages/Signup";
+import ViewAllClubs from "./components/admin/ViewAllClubs";
+import ViewClub from "./components/admin/ViewClub";
+import DeleteClub from "./components/admin/DeleteClub";
+import DeleteUser from "./components/admin/DeleteUser";
+
 
 function App() {
+
+
   return (
     <Router>
-      <Navbar />
+      
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/" element={<Homepage />} />
         <Route path="/signin" element={<Signin />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/userdashboard" element={<UserDashboard />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/view-user" element={<ViewUser />} />
+        <Route path="/admin/view-all-users" element={<ViewAllUsers />} />
+        <Route path="/admin/view-club" element={<ViewClub />} />
+        <Route path="/admin/view-all-clubs" element={<ViewAllClubs />} />
+        <Route path="/admin/delete-club" element={<DeleteClub />} />
+        <Route path="/admin/delete-user" element={<DeleteUser />} />
       </Routes>
+
     </Router>
   );
 }
