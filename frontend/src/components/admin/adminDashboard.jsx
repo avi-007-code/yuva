@@ -47,7 +47,7 @@ const AdminDashboard = () => {
             <p className="mt-2 text-gray-600">Welcome, you are logged in with JWT!</p>
             <button
               onClick={handleLogout}
-              className="mt-4 bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+              className="mt-4 bg-red-500 cursor-pointer text-white py-2 px-4 rounded hover:bg-red-600"
             >
               Logout
             </button>
