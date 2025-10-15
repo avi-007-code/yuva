@@ -1,10 +1,12 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import {
   IoNotificationsOutline,
   IoMoonOutline,
   IoSunnyOutline,
 } from "react-icons/io5";
+import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { ThemeContext } from "../../context/ThemeContext";
 
 export default function UserDashboard() {
   const [notifications] = useState([
@@ -13,24 +15,56 @@ export default function UserDashboard() {
     "Prakruthi posted a new update 🌿",
     "SAHELI workshop registrations open 💡",
   ]);
-  const [showPanel, setShowPanel] = useState(false);
-  const [darkTheme, setDarkTheme] = useState(false);
 
+  const [showPanel, setShowPanel] = useState(false);
+  const [showAvatarMenu, setShowAvatarMenu] = useState(false);
+  const hideMenuTimeout = useRef(null);
+
+  const { darkTheme, toggleTheme } = useContext(ThemeContext);
   const panelRef = useRef(null);
   const bellRef = useRef(null);
-
+  const avatarRef = useRef(null);
+  const menuRef = useRef(null);
   const navigate = useNavigate();
 
-  const username = "Hemanth"; // dynamic later
+  const username = "Hemanth";
   const firstLetter = username.charAt(0).toUpperCase();
 
-  // ✅ Load clubs from localStorage
+  // ✅ Load profile image
+  const [profileImg, setProfileImg] = useState(() => {
+    try {
+      const saved = localStorage.getItem("userProfile");
+      if (!saved) return null;
+      const parsed = JSON.parse(saved);
+      return parsed.profileImg || null;
+    } catch {
+      return null;
+    }
+  });
+
+  // ✅ Sync profile image
+  useEffect(() => {
+    function onStorage(e) {
+      if (e.key === "userProfile") {
+        try {
+          const parsed = JSON.parse(e.newValue || "null");
+          setProfileImg(parsed ? parsed.profileImg : null);
+        } catch {
+          setProfileImg(null);
+        }
+      }
+    }
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
+  // ✅ Load joined clubs
   const [joinedClubs, setJoinedClubs] = useState(() => {
     const saved = localStorage.getItem("joinedClubs");
     return saved ? JSON.parse(saved) : [];
   });
 
-  // ✅ close notification on outside click
+  // ✅ Close notification panel on outside click
   useEffect(() => {
     function handleClickOutside(e) {
       if (
@@ -42,16 +76,11 @@ export default function UserDashboard() {
         setShowPanel(false);
       }
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const toggleTheme = () => {
-    setDarkTheme((prev) => !prev);
-  };
-
-  // 🎯 Club data
+  // ✅ Club Data
   const clubs = [
     {
       name: "Spoorthi",
@@ -83,7 +112,6 @@ export default function UserDashboard() {
     },
   ];
 
-  // ✅ Toggle club join/leave
   const handleToggleClub = (clubName) => {
     let updated;
     if (joinedClubs.includes(clubName)) {
@@ -93,23 +121,37 @@ export default function UserDashboard() {
     }
     setJoinedClubs(updated);
     localStorage.setItem("joinedClubs", JSON.stringify(updated));
-    window.dispatchEvent(new Event("storage")); // 🔥 notify profile
+    window.dispatchEvent(new Event("storage"));
+  };
+
+  // ✅ Avatar hover logic with delay
+  const handleMouseEnter = () => {
+    clearTimeout(hideMenuTimeout.current);
+    setShowAvatarMenu(true);
+  };
+
+  const handleMouseLeave = () => {
+    hideMenuTimeout.current = setTimeout(() => {
+      setShowAvatarMenu(false);
+    }, 200);
   };
 
   return (
     <div
-      className={`flex flex-col w-full min-h-screen transition-colors duration-300 
-        ${darkTheme ? "bg-gray-900 text-white" : "bg-gray-100 text-black"}`}
+      className={`flex flex-col w-full min-h-screen transition-colors duration-300 ${
+        darkTheme ? "bg-gray-900 text-white" : "bg-gray-100 text-black"
+      }`}
     >
-      {/* 🔔 Top bar */}
+      {/* 🔔 Top Bar */}
       <div
-        className={`flex items-center justify-between px-6 py-4 shadow-md relative 
-        ${darkTheme ? "bg-gray-800" : "bg-indigo-600"}`}
+        className={`flex items-center justify-between px-6 py-4 shadow-md relative ${
+          darkTheme ? "bg-gray-800" : "bg-indigo-600"
+        }`}
       >
         <h1 className="text-xl font-bold text-white">User Dashboard</h1>
 
         <div className="flex items-center space-x-6 text-white">
-          {/* Bell Icon + Dropdown */}
+          {/* 🔔 Notifications */}
           <div ref={bellRef} className="relative">
             <IoNotificationsOutline
               className="text-2xl cursor-pointer"
@@ -122,8 +164,7 @@ export default function UserDashboard() {
             {showPanel && (
               <div
                 ref={panelRef}
-                className={`absolute right-0 top-12 w-72 shadow-lg rounded-lg border z-50
-                ${
+                className={`absolute right-0 top-12 w-72 shadow-lg rounded-lg border z-50 ${
                   darkTheme
                     ? "bg-gray-800 border-gray-700 text-white"
                     : "bg-white border-gray-200 text-black"
@@ -135,12 +176,11 @@ export default function UserDashboard() {
                     notifications.map((note, idx) => (
                       <div
                         key={idx}
-                        className={`px-4 py-2 text-sm border-b last:border-none cursor-pointer 
-                          ${
-                            darkTheme
-                              ? "hover:bg-gray-700 border-gray-700"
-                              : "hover:bg-gray-100 border-gray-200"
-                          }`}
+                        className={`px-4 py-2 text-sm border-b last:border-none cursor-pointer ${
+                          darkTheme
+                            ? "hover:bg-gray-700 border-gray-700"
+                            : "hover:bg-gray-100 border-gray-200"
+                        }`}
                       >
                         {note}
                       </div>
@@ -155,7 +195,7 @@ export default function UserDashboard() {
             )}
           </div>
 
-          {/* 🌙/☀️ Theme Toggle */}
+          {/* 🌙 / ☀️ Theme Toggle */}
           <button
             onClick={toggleTheme}
             className="text-2xl cursor-pointer focus:outline-none"
@@ -163,22 +203,84 @@ export default function UserDashboard() {
             {darkTheme ? <IoSunnyOutline /> : <IoMoonOutline />}
           </button>
 
-          {/* 👤 Profile (First Letter) */}
-          <button
-            onClick={() => navigate("/userprofile")}
-            className={`h-9 w-9 rounded-full cursor-pointer flex items-center justify-center font-bold text-lg 
-              ${darkTheme ? "bg-gray-700 text-white" : "bg-white text-indigo-600"}`}
+          {/* 👤 Profile Avatar + Hover Dropdown */}
+          <div
+            className="relative"
+            ref={avatarRef}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
-            {firstLetter}
-          </button>
+            <button
+              aria-label="Open user profile menu"
+              className={`h-10 w-10 rounded-full cursor-pointer overflow-hidden flex items-center justify-center text-lg shadow-md ${
+                darkTheme
+                  ? "bg-gradient-to-br from-gray-700 via-gray-600 to-gray-500"
+                  : "bg-white"
+              }`}
+            >
+              {profileImg ? (
+                <img
+                  src={profileImg}
+                  alt="profile"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span
+                  className={`font-bold ${
+                    darkTheme ? "text-white" : "text-indigo-600"
+                  }`}
+                >
+                  {firstLetter}
+                </span>
+              )}
+            </button>
+
+            {showAvatarMenu && (
+              <div
+                ref={menuRef}
+                className={`absolute right-0 mt-2 w-44 rounded-lg shadow-lg z-50 border ${
+                  darkTheme
+                    ? "bg-gray-800 border-gray-700 text-white"
+                    : "bg-white border-gray-200 text-black"
+                }`}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                <button
+                  onClick={() => {
+                    navigate("/userprofile");
+                    setShowAvatarMenu(false);
+                  }}
+                  className={`flex items-center w-full cursor-pointer text-left px-4 py-2 gap-2 transition ${
+                    darkTheme
+                      ? "hover:bg-gray-700"
+                      : "hover:bg-gray-100 text-black"
+                  }`}
+                >
+                  <FaUserCircle className="text-lg opacity-80" />
+                  <span>My Profile</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    navigate("/signin");
+                  }}
+                  className="flex items-center w-full cursor-pointer text-left px-4 py-2 gap-2 font-medium text-red-500 transition hover:bg-red-100 dark:hover:bg-red-900/30"
+                >
+                  <FaSignOutAlt className="text-red-500" />
+                  <span>Logout</span>
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* 📌 Main content */}
+      {/* 📌 Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center p-6 w-full">
         <h2 className="mb-6 text-2xl font-semibold">Clubs</h2>
 
-        {/* Club Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-[60%] max-w-4xl">
           {clubs.map((club, idx) => {
             const joined = joinedClubs.includes(club.name);
@@ -186,10 +288,10 @@ export default function UserDashboard() {
             return (
               <div
                 key={idx}
-                className={`rounded-xl shadow-md overflow-hidden transition hover:scale-105 
-                  ${darkTheme ? "bg-gray-800" : "bg-white"}`}
+                className={`rounded-xl shadow-md overflow-hidden transition hover:scale-105 ${
+                  darkTheme ? "bg-gray-800" : "bg-white"
+                }`}
               >
-                {/* Club Image */}
                 <div className="flex justify-center mt-4">
                   <img
                     src={club.image}
@@ -198,7 +300,6 @@ export default function UserDashboard() {
                   />
                 </div>
 
-                {/* Club Info */}
                 <div className="p-4 flex flex-col items-center text-center">
                   <h3 className={`text-lg font-bold mb-2 ${club.color}`}>
                     {club.name}
@@ -207,14 +308,13 @@ export default function UserDashboard() {
 
                   <button
                     onClick={() => handleToggleClub(club.name)}
-                    className={`px-4 py-2 hover:cursor-pointer rounded-lg font-medium transition
-                      ${
-                        joined
-                          ? "bg-red-500 hover:bg-red-600 text-white"
-                          : darkTheme
-                          ? "bg-gray-700 hover:bg-gray-600 text-white"
-                          : "bg-indigo-600 hover:bg-indigo-700 text-white"
-                      }`}
+                    className={`px-4 py-2 rounded-lg font-medium transition ${
+                      joined
+                        ? "bg-red-500 hover:bg-red-600 text-white"
+                        : darkTheme
+                        ? "bg-gray-700 hover:bg-gray-600 text-white"
+                        : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                    }`}
                   >
                     {joined ? "Leave Club" : "Join"}
                   </button>

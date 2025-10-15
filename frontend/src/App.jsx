@@ -9,30 +9,33 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminDashboard from "./components/admin/adminDashboard";
 import UserDashboard from "./components/user/UserDashboard";
 import UserProfile from "./components/user/UserProfile";
+import ThemeProvider from "./context/ThemeContext";
 
 function App() {
 
   const hideNavbarRoutes=["/userdashboard","/userprofile","/dashboard"]
   
   return (
-    <Router>
-      {!hideNavbarRoutes.includes(location.pathname) && <Navbar />}
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/signin" element={<Signin />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/userdashboard"  element={<UserDashboard />}/>
-        <Route path="/userprofile" element={<UserProfile />}/>
-      </Routes>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        {!hideNavbarRoutes.includes(location.pathname) && <Navbar />}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/signin" element={<Signin />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/userdashboard"  element={<UserDashboard />}/>
+          <Route path="/userprofile" element={<UserProfile />}/>
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
 
