@@ -308,7 +308,7 @@ export default function UserDashboard() {
 
                   <button
                     onClick={() => handleToggleClub(club.name)}
-                    className={`px-4 py-2 rounded-lg font-medium transition ${
+                    className={`px-4 py-2 rounded-lg cursor-pointer font-medium transition ${
                       joined
                         ? "bg-red-500 hover:bg-red-600 text-white"
                         : darkTheme
