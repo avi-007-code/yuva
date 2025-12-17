@@ -10,6 +10,8 @@ import AdminDashboard from "./components/admin/adminDashboard";
 import UserDashboard from "./components/user/UserDashboard";
 import UserProfile from "./components/user/UserProfile";
 import ThemeProvider from "./context/ThemeContext";
+import AllClubs from "./components/user/AllClubs";
+import AllAnnouncements from "./components/user/AllAnnouncements";
 
 function App() {
 
@@ -33,6 +35,8 @@ function App() {
           />
           <Route path="/userdashboard"  element={<UserDashboard />}/>
           <Route path="/userprofile" element={<UserProfile />}/>
+          <Route path="/allclubs" element={<AllClubs />} />
+          <Route path="/allannouncements" element={<AllAnnouncements />} />
         </Routes>
       </Router>
     </ThemeProvider>
