@@ -5,6 +5,7 @@ import PublicLayout from '../../components/public/PublicLayout';
 import EventModal from '../../components/public/EventModal';
 import GalleryLightbox from '../../components/public/GalleryLightbox';
 import EmptyState from '../../components/common/EmptyState';
+import { EventCardSkeleton } from '../../components/common/CardSkeleton';
 import EventHero from '../../components/EventHero';
 import { getCloudinaryUrl, CLOUDINARY_TRANSFORMS } from '../../utils/cloudinary';
 import { Calendar, MapPin, Building2, Sparkles, AlertCircle, RefreshCw, ArrowRight, Clock, ExternalLink } from 'lucide-react';
