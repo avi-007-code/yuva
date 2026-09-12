@@ -1,48 +1,36 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import adminApi from "../../api/adminApi";
+import DeleteOtpModal from "./DeleteOtpModal";
 
 const DeleteClub = () => {
   const [clubs, setClubs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [clubToDelete, setClubToDelete] = useState(null);
   const navigate = useNavigate();
-  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
+  const fetchClubs = async () => {
+    try {
+      setLoading(true);
+      const res = await adminApi.getAllClubs();
+      setClubs(res.data || []);
+    } catch (err) {
+      console.error("Error fetching clubs:", err);
+      alert("Failed to fetch clubs");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchClubs = async () => {
-      try {
-        setLoading(true);
-        const token = localStorage.getItem("token");
-        const res = await axios.get(`${API_BASE}/api/admin/viewAllClubs`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setClubs(res.data.data || []);
-      } catch (err) {
-        console.error("Error fetching clubs:", err);
-        alert("Failed to fetch clubs");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchClubs();
-  }, [API_BASE]);
+  }, []);
 
-  const handleDeleteClub = async (clubId) => {
-    if (!window.confirm("Are you sure you want to delete this club?")) return;
-
-    try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`${API_BASE}/api/admin/deleteClub/${clubId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      alert("Club deleted successfully!");
-      setClubs(clubs.filter((c) => c.id !== clubId));
-    } catch (err) {
-      console.error("Error deleting club:", err);
-      alert("Failed to delete club");
-    }
+  const handleDeleteConfirm = async (code) => {
+    if (!clubToDelete) return;
+    await adminApi.deleteClub(clubToDelete.id, code);
+    setClubs(clubs.filter((c) => c.id !== clubToDelete.id));
+    setClubToDelete(null);
   };
 
   return (
@@ -87,7 +75,7 @@ const DeleteClub = () => {
                   )}
                 </div>
                 <button
-                  onClick={() => handleDeleteClub(club.id)}
+                  onClick={() => setClubToDelete(club)}
                   className="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
                 >
                   Delete
@@ -97,6 +85,16 @@ const DeleteClub = () => {
           </div>
         )}
       </div>
+
+      <DeleteOtpModal
+        isOpen={!!clubToDelete}
+        onClose={() => setClubToDelete(null)}
+        onRequestCode={() => adminApi.requestClubDeletionCode(clubToDelete?.id)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Club"
+        itemType="Club"
+        itemName={clubToDelete?.name}
+      />
     </div>
   );
 };

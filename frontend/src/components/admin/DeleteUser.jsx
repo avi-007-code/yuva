@@ -1,48 +1,36 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import adminApi from "../../api/adminApi";
+import DeleteOtpModal from "./DeleteOtpModal";
 
 const DeleteUser = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
   const navigate = useNavigate();
-  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const res = await adminApi.getAllUsers();
+      setUsers(res.data?.users || res.data || []);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+      alert("Failed to fetch users");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setLoading(true);
-        const token = localStorage.getItem("token");
-        const res = await axios.get(`${API_BASE}/api/admin/viewAllUsers`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUsers(res.data.data || []);
-      } catch (err) {
-        console.error("Error fetching users:", err);
-        alert("Failed to fetch users");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchUsers();
-  }, [API_BASE]);
+  }, []);
 
-  const handleDeleteUser = async (userId) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
-
-    try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`${API_BASE}/api/admin/deleteUser/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      alert("User deleted successfully!");
-      setUsers(users.filter((u) => u.id !== userId));
-    } catch (err) {
-      console.error("Error deleting user:", err);
-      alert("Failed to delete user");
-    }
+  const handleDeleteConfirm = async (code) => {
+    if (!userToDelete) return;
+    await adminApi.deleteUser(userToDelete.id, code);
+    setUsers(users.filter((u) => u.id !== userToDelete.id));
+    setUserToDelete(null);
   };
 
   return (
@@ -85,7 +73,7 @@ const DeleteUser = () => {
                     </td>
                     <td className="px-4 py-2 border text-center">
                       <button
-                        onClick={() => handleDeleteUser(user.id)}
+                        onClick={() => setUserToDelete(user)}
                         className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
                       >
                         Delete
@@ -98,6 +86,16 @@ const DeleteUser = () => {
           </div>
         )}
       </div>
+
+      <DeleteOtpModal
+        isOpen={!!userToDelete}
+        onClose={() => setUserToDelete(null)}
+        onRequestCode={() => adminApi.requestUserDeletionCode(userToDelete?.id)}
+        onConfirm={handleDeleteConfirm}
+        title="Delete User"
+        itemType="User"
+        itemName={userToDelete?.name}
+      />
     </div>
   );
 };
