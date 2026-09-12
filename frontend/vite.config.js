@@ -8,7 +8,4 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
 })
