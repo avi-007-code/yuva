@@ -19,6 +19,11 @@ const authLimiter = createLimiter({
   limit: 5,
 });
 
+const loginLimiter = createLimiter({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+});
+
 const inviteLimiter = createLimiter({
   windowMs: 15 * 60 * 1000,
   limit: 10,
@@ -34,4 +39,4 @@ const destructiveLimiter = createLimiter({
   limit: 25,
 });
 
-module.exports = { authLimiter, inviteLimiter, uploadLimiter, destructiveLimiter };
+module.exports = { authLimiter, loginLimiter, inviteLimiter, uploadLimiter, destructiveLimiter };

@@ -8,7 +8,7 @@ const {
 	adminRegister,
 } = require('../controllers/authController');
 const { validate } = require('../middleware/validate');
-const { authLimiter } = require('../middleware/rateLimiters');
+const { authLimiter, loginLimiter } = require('../middleware/rateLimiters');
 const {
 	loginBody,
 	forgotPasswordBody,
@@ -17,10 +17,10 @@ const {
 } = require('../validators/schemas');
 
 // POST /auth/admin/login
-router.post('/admin/login', authLimiter, validate({ body: loginBody }), adminLogin);
+router.post('/admin/login', loginLimiter, validate({ body: loginBody }), adminLogin);
 
 // POST /auth/manager/login
-router.post('/manager/login', authLimiter, validate({ body: loginBody }), managerLogin);
+router.post('/manager/login', loginLimiter, validate({ body: loginBody }), managerLogin);
 router.post('/manager/forgot-password', authLimiter, validate({ body: forgotPasswordBody }), requestManagerPasswordReset);
 router.post('/manager/reset-password', authLimiter, validate({ body: resetPasswordBody }), resetManagerPassword);
 
