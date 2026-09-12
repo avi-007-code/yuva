@@ -23,5 +23,4 @@ dist-ssr
 *.sln
 *.sw?
 
-# Firebase admin details
-yuvaa-2ab8e-firebase-adminsdk-fbsvc-0e33f5d3ad.json
+.env 
