@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,40 +7,104 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+type CloudinaryImage {
+  url      String
+  publicId String
+}
+
 model User {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  name         String
-  email        String   @unique
-  password     String
-  role         Role     @default(MEMBER)
-  createdClubs Club[]   @relation("ClubOwner")
-  memberships  Membership[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  email           String       @unique
+  password        String?      // null until the invite is accepted
+  role            GlobalRole   @default(USER)
+  isActive        Boolean      @default(false)
+  inviteToken     String?      
+  inviteExpiresAt DateTime?
+  avatar          CloudinaryImage?
+  passwordResetOtpHash      String?
+  passwordResetOtpExpiresAt DateTime?
+  createdClubs    Club[]       @relation("ClubOwner")
+  memberships     Membership[]
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 }
 
 model Club {
-  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String?
-  createdBy   User          @relation("ClubOwner", fields: [createdById], references: [id])
-  createdById String        @db.ObjectId
+  logo        CloudinaryImage?
+  coverImage  CloudinaryImage?
+  createdBy   User         @relation("ClubOwner", fields: [createdById], references: [id])
+  createdById String       @db.ObjectId
   members     Membership[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  events      Event[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Event {
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  club            Club        @relation(fields: [clubId], references: [id])
+  clubId          String      @db.ObjectId
+  title           String
+  description     String
+  location        String
+  startAt         DateTime
+  endAt           DateTime?
+  status          EventStatus @default(UPCOMING)
+  coverImage      CloudinaryImage?
+  gallery         CloudinaryImage[]
+  registrationUrl String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([clubId, startAt])
+  @@index([clubId, status])
 }
 
 model Membership {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  user    User   @relation(fields: [userId], references: [id])
-  userId  String @db.ObjectId
-  club    Club   @relation(fields: [clubId], references: [id])
-  clubId  String @db.ObjectId
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  user     User     @relation(fields: [userId], references: [id])
+  userId   String   @db.ObjectId
+  club     Club     @relation(fields: [clubId], references: [id])
+  clubId   String   @db.ObjectId
+  role     ClubRole @default(MEMBER)
   joinedAt DateTime @default(now())
+
+  @@unique([userId, clubId])
 }
 
-enum Role {
+model DeletionVerification {
+  id         String           @id @default(auto()) @map("_id") @db.ObjectId
+  adminId    String           @db.ObjectId
+  targetType DeleteTargetType
+  targetId   String           @db.ObjectId
+  codeHash   String
+  expiresAt  DateTime
+  consumed   Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+}
+
+enum GlobalRole {
   ADMIN
-  CLUB
+  USER
+}
+
+enum ClubRole {
+  MANAGER
   MEMBER
+}
+
+enum DeleteTargetType {
+  USER
+  CLUB
+}
+
+enum EventStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
 }

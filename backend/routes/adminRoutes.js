@@ -1,32 +1,104 @@
 const express = require('express');
 const router = express.Router();
-const {verifyAdmin} = require('../middleware/authenticateMiddleware')
-const { adminRegister, adminLogin } = require("../controllers/authController");
-const { viewUser, viewAllClubs, viewClub, deleteClub, deleteUser, viewAllUsers } = require('../controllers/adminController');
+const { requireAdmin } = require('../middleware/authMiddleware');
+const { validate } = require('../middleware/validate');
+const { inviteLimiter, destructiveLimiter, uploadLimiter } = require('../middleware/rateLimiters');
+const {
+  idParams, clubParams, managerInviteBody, createClubBody, updateClubBody,
+  membershipBody, existingManagerBody, deletionVerificationBody,
+} = require('../validators/schemas');
+const {
+  createManager,
+  resendInvite,
+  createClub,
+  updateClub,
+  updateMembership,
+  deleteMembership,
+  getClubManagers,
+  inviteManagerToClub,
+  addExistingManagerToClub,
+  listClubs,
+  getClub,
+  viewUser,
+  viewAllUsers,
+  viewClub,
+  viewAllClubs,
+  deleteUser,
+  deleteClub,
+  requestUserDeletionCode,
+  requestClubDeletionCode,
+  getAdminProfile,
+  updateAdminProfile,
+  uploadAdminAvatar,
+  deleteAdminAvatar,
+} = require('../controllers/adminController');
+const { singleImage } = require('../middleware/uploadMiddleware');
 
+// All routes in this router require ADMIN permissions
+router.use(requireAdmin);
 
+// Admin Profile routes
+router.get('/profile', getAdminProfile);
+router.patch('/profile', updateAdminProfile);
+router.post('/profile/avatar', uploadLimiter, singleImage('avatar'), uploadAdminAvatar);
+router.delete('/profile/avatar', uploadLimiter, deleteAdminAvatar);
 
+// Manager invitation routes
+// POST /admin/managers
+router.post('/managers', inviteLimiter, validate({ body: managerInviteBody }), createManager);
 
-router.post('/register',adminRegister);
-router.post('/login',adminLogin);
-router.get('/viewAllUsers',verifyAdmin,viewAllUsers);
-router.get('/viewUser/:id',verifyAdmin,viewUser);
-router.get('/viewAllClubs',viewAllClubs);
-router.get('/viewClub/:id',verifyAdmin,viewClub);
-router.delete('/deleteClub/:id',verifyAdmin,deleteClub);
-router.delete('/deleteUser/:id',verifyAdmin,deleteUser);
+// POST /admin/managers/:userId/resend-invite
+router.post('/managers/:userId/resend-invite', inviteLimiter, validate({ params: idParams('userId') }), resendInvite);
 
-
-// verify token route (used by frontend ProtectedRoute)
-router.get("/verify", verifyAdmin, (req, res) => {
-  res.json({ message: "Token valid", user: req.user });
+// User management routes
+router.get('/viewAllUsers', viewAllUsers);
+router.get('/viewUser/:id', validate({ params: idParams('id') }), viewUser);
+router.post('/users/:userId/delete/request-code', destructiveLimiter, validate({ params: idParams('userId') }), requestUserDeletionCode);
+router.delete('/users/:userId', destructiveLimiter, validate({ params: idParams('userId'), body: deletionVerificationBody }), (req, res, next) => {
+  req.params.id = req.params.userId;
+  return deleteUser(req, res, next);
 });
+router.delete('/deleteUser/:id', destructiveLimiter, validate({ params: idParams('id'), body: deletionVerificationBody }), deleteUser);
 
+// Club management routes
+// POST /admin/clubs
+router.post('/create-club', validate({ body: createClubBody }), createClub);
 
-// verify token route (used by frontend ProtectedRoute)
-router.get("/verify", verifyAdmin, (req, res) => {
-  res.json({ message: "Token valid", user: req.user });
+// PATCH /admin/clubs/:clubId
+router.patch('/clubs/:clubId', validate({ params: clubParams, body: updateClubBody }), updateClub);
+
+// PATCH /admin/memberships/:membershipId
+router.patch('/memberships/:membershipId', validate({ params: idParams('membershipId'), body: membershipBody }), updateMembership);
+
+// DELETE /admin/memberships/:membershipId
+router.delete('/memberships/:membershipId', destructiveLimiter, validate({ params: idParams('membershipId') }), deleteMembership);
+
+// GET /admin/clubs/:clubId/managers
+router.get('/clubs/:clubId/managers', validate({ params: clubParams }), getClubManagers);
+
+// POST /admin/clubs/:clubId/managers
+router.post('/clubs/:clubId/managers', inviteLimiter, validate({ params: clubParams, body: managerInviteBody }), inviteManagerToClub);
+
+// POST /admin/clubs/:clubId/managers/existing
+router.post('/clubs/:clubId/managers/existing', validate({ params: clubParams, body: existingManagerBody }), addExistingManagerToClub);
+
+// GET /admin/clubs
+router.get('/clubs', listClubs);
+
+// GET /admin/clubs/:clubId
+router.get('/clubs/:clubId', validate({ params: clubParams }), getClub);
+
+// DELETE /admin/clubs/:clubId
+router.post('/clubs/:clubId/delete/request-code', destructiveLimiter, validate({ params: clubParams }), requestClubDeletionCode);
+router.delete('/clubs/:clubId', destructiveLimiter, validate({ params: clubParams, body: deletionVerificationBody }), deleteClub);
+
+router.get('/viewAllClubs', viewAllClubs);
+router.get('/viewClub/:id', validate({ params: idParams('id') }), viewClub);
+router.delete('/deleteClub/:id', destructiveLimiter, validate({ params: idParams('id'), body: deletionVerificationBody }), deleteClub);
+
+// Verify token route (used by frontend ProtectedRoute)
+router.get('/verify', (req, res) => {
+  res.json({ success: true, message: 'Admin token is valid', user: req.user });
 });
-
 
 module.exports = router;
