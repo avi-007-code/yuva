@@ -1,8 +1,20 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400..800;1,400..800&family=Syne:wght@700;800&display=swap');
 
 @theme {
   --font-serif: "Fraunces", Georgia, serif;
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-sans: "Outfit", "Plus Jakarta Sans", "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Syne", "Outfit", sans-serif;
+}
+
+/* Custom Figma Event Card Box Shadow */
+.figma-card-shadow {
+  box-shadow: 
+    0px -8px 80px rgba(0, 0, 0, 0.07),
+    0px -2.92013px 29.2013px rgba(0, 0, 0, 0.0482987),
+    0px -1.41767px 14.1767px rgba(0, 0, 0, 0.0389404),
+    0px -0.694968px 6.94968px rgba(0, 0, 0, 0.0310596),
+    0px -0.274791px 2.74791px rgba(0, 0, 0, 0.0217013);
 }
 
 /* Dark mode styling for native calendar and time pickers */

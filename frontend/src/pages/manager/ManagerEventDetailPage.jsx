@@ -88,6 +88,11 @@ const ManagerEventDetailPage = () => {
       const evt = res.data?.event || res.event || res;
       setEvent(evt);
       setTitle(evt.title || '');
+      if (evt.title) {
+        document.title = `${evt.title} | ClubHub Manager`;
+      } else {
+        document.title = 'Event Details | ClubHub Manager';
+      }
       setDescription(evt.description || '');
       setLocation(evt.location || '');
       setStartAt(formatDateForInput(evt.startAt));

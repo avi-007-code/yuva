@@ -117,6 +117,11 @@ const ManagerClubDetailPage = () => {
       setClub(clubData);
       setClubName(clubData.name || '');
       setClubDescription(clubData.description || '');
+      if (clubData.name) {
+        document.title = `${clubData.name} | ClubHub Manager`;
+      } else {
+        document.title = 'Club Dashboard | ClubHub Manager';
+      }
     } catch (err) {
       console.error('Error fetching club dashboard:', err);
       const status = err.response?.status;

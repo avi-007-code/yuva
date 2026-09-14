@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Calendar, Clock, MapPin, Sparkles, ExternalLink } from 'lucide-react';
 import { getCloudinaryUrl, CLOUDINARY_TRANSFORMS } from '../utils/cloudinary';
 
@@ -162,9 +163,12 @@ export const EventHero = ({ event, children, className = '' }) => {
           </div>
 
           {/* Bold Event Title */}
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight sm:leading-snug drop-shadow-md max-w-4xl">
+          <Link
+            to={`/clubs/${event.clubId || event.club?.id || 'public'}/events/${event.id}`}
+            className="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white hover:text-purple-200 transition tracking-tight leading-tight sm:leading-snug drop-shadow-md max-w-4xl"
+          >
             {title}
-          </h1>
+          </Link>
 
           {/* Optional Short Description */}
           {event.description && (

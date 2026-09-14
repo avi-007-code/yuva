@@ -55,8 +55,14 @@ const ClubDetailsPage = () => {
         adminApi.getClubManagers(clubId).catch(() => ({ data: { managers: [] } })),
       ]);
 
-      setClub(clubRes.data || null);
+      const clubData = clubRes.data || null;
+      setClub(clubData);
       setManagers(managersRes.data?.managers || []);
+      if (clubData?.name) {
+        document.title = `${clubData.name} | ClubHub Admin`;
+      } else {
+        document.title = 'Club Details | ClubHub Admin';
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load club details.');
     } finally {

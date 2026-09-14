@@ -10,9 +10,12 @@ const Login = ({ role: propsRole }) => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  // Determine effective role: propsRole first, fallback to location pathname
   const effectiveRole = propsRole || (location.pathname.includes('admin') ? 'admin' : 'manager');
   const isAdmin = effectiveRole === 'admin';
+
+  React.useEffect(() => {
+    document.title = `${isAdmin ? 'Admin Login' : 'Manager Login'} | ClubHub`;
+  }, [isAdmin]);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

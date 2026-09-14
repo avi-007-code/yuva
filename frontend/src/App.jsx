@@ -7,6 +7,9 @@ import ErrorBoundary from './components/common/ErrorBoundary';
 import PublicHomePage from './pages/public/PublicHomePage';
 import PublicClubsListPage from './pages/public/PublicClubsListPage';
 import PublicClubDetailPage from './pages/public/PublicClubDetailPage';
+import PublicEventDetailPage from './pages/public/PublicEventDetailPage';
+import PublicDashboardDemo from './pages/public-demo/PublicDashboardDemo';
+import YuuvaShowcase from './pages/yuva/YuuvaShowcase';
 
 // Dedicated Login Pages
 import Login from './pages/Login';
@@ -40,8 +43,13 @@ function App() {
           <Routes>
             {/* Public Unauthenticated Routes */}
             <Route path="/" element={<PublicHomePage />} />
+            <Route path="/yuuva" element={<YuuvaShowcase />} />
+            <Route path="/yuuva/*" element={<YuuvaShowcase />} />
+            <Route path="/demo" element={<PublicDashboardDemo />} />
+            <Route path="/events/:eventId" element={<PublicEventDetailPage />} />
             <Route path="/clubs" element={<PublicClubsListPage />} />
             <Route path="/clubs/:clubId" element={<PublicClubDetailPage />} />
+            <Route path="/clubs/:clubId/events/:eventId" element={<PublicEventDetailPage />} />
 
             {/* Dedicated Login Routes */}
             <Route path="/login/admin" element={<Login role="admin" />} />

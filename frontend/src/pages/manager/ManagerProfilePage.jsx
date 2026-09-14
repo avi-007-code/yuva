@@ -48,6 +48,7 @@ const ManagerProfilePage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
+    document.title = 'Manager Profile | ClubHub';
     fetchProfile();
   }, []);
 

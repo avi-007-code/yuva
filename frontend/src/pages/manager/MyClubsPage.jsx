@@ -35,6 +35,7 @@ const MyClubsPage = () => {
   };
 
   useEffect(() => {
+    document.title = 'My Clubs | ClubHub Manager';
     fetchMyClubs();
   }, []);
 

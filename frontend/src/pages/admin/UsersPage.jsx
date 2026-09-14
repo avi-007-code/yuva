@@ -17,6 +17,7 @@ const UsersPage = () => {
   const [userToDelete, setUserToDelete] = useState(null);
 
   useEffect(() => {
+    document.title = 'User Management | ClubHub Admin';
     fetchUsers();
   }, []);
 

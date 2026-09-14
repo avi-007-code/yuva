@@ -59,6 +59,7 @@ const ManagerDashboard = () => {
   };
 
   useEffect(() => {
+    document.title = 'Manager Dashboard | ClubHub';
     fetchDashboardData();
   }, []);
 
