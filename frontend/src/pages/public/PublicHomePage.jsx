@@ -5,7 +5,7 @@ import { publicApi } from '../../api/publicApi';
 import PublicLayout from '../../components/public/PublicLayout';
 import EventModal from '../../components/public/EventModal';
 import GalleryLightbox from '../../components/public/GalleryLightbox';
-import MarqueeTicker from '../../components/public-demo/MarqueeTicker';
+// import MarqueeTicker from '../../components/public-demo/MarqueeTicker';
 import { getClubCoverImage } from '../../utils/clubCovers';
 import {
   ArrowRight,
