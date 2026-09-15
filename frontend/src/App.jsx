@@ -46,9 +46,9 @@ function App() {
           <Routes>
             {/* Public Unauthenticated Routes */}
             <Route path="/" element={<PublicHomePage />} />
-            <Route path="/yuuva" element={<YuuvaShowcase />} />
-            <Route path="/yuuva/*" element={<YuuvaShowcase />} />
-            <Route path="/demo" element={<PublicDashboardDemo />} />
+            {/* <Route path="/yuuva" element={<YuuvaShowcase />} /> */}
+            {/* <Route path="/yuuva/*" element={<YuuvaShowcase />} /> */}
+            {/* <Route path="/demo" element={<PublicDashboardDemo />} /> */}
             <Route path="/events/:eventId" element={<PublicEventDetailPage />} />
             <Route path="/clubs" element={<PublicClubsListPage />} />
             <Route path="/clubs/:clubId" element={<PublicClubDetailPage />} />
