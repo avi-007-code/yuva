@@ -25,7 +25,6 @@ dist-ssr
 
 .env 
 
-# Local-only showcase implementations
 /src/components/public-demo/
 /src/pages/public-demo/
 /src/components/yuva/
