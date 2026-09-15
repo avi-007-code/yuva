@@ -19,6 +19,7 @@ const ClubsPage = () => {
   const [clubToEdit, setClubToEdit] = useState(null);
 
   useEffect(() => {
+    document.title = 'Club Management | 4 THE PEOPLE';
     fetchClubs();
   }, []);
 

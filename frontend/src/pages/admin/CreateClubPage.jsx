@@ -11,6 +11,10 @@ const CreateClubPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  React.useEffect(() => {
+    document.title = 'Create Club | 4 THE PEOPLE';
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');

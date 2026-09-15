@@ -17,6 +17,7 @@ const UsersPage = () => {
   const [userToDelete, setUserToDelete] = useState(null);
 
   useEffect(() => {
+    document.title = 'User Management | 4 THE PEOPLE';
     fetchUsers();
   }, []);
 
@@ -62,11 +63,10 @@ const UsersPage = () => {
       header: 'Role',
       render: (user) => (
         <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            user.role === 'ADMIN'
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.role === 'ADMIN'
               ? 'bg-[#F0EFEF] text-[#4A4950] border border-[#D8D7DC]'
               : 'bg-[#F9F8F6] text-[#6B6966] border border-[#E7E5E4]'
-          }`}
+            }`}
         >
           {user.role}
         </span>
@@ -76,11 +76,10 @@ const UsersPage = () => {
       header: 'Status',
       render: (user) => (
         <span
-          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-            user.isActive
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${user.isActive
               ? 'bg-[#EBF3ED] text-[#2E5A44] border border-[#D1E3D7]'
               : 'bg-[#FAF4E8] text-[#8A6421] border border-[#EEDFA8]'
-          }`}
+            }`}
         >
           {user.isActive ? 'Active' : 'Pending Invite'}
         </span>

@@ -39,7 +39,13 @@ const UserDetailsPage = () => {
     setError('');
     try {
       const res = await adminApi.getUser(userId);
-      setUser(res.data || null);
+      const data = res.data || null;
+      setUser(data);
+      if (data?.name) {
+        document.title = `${data.name} | 4 THE PEOPLE`;
+      } else {
+        document.title = 'User Details | 4 THE PEOPLE';
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load user details.');
     } finally {

@@ -117,6 +117,11 @@ const ManagerClubDetailPage = () => {
       setClub(clubData);
       setClubName(clubData.name || '');
       setClubDescription(clubData.description || '');
+      if (clubData.name) {
+        document.title = `${clubData.name} | 4 THE PEOPLE`;
+      } else {
+        document.title = 'Club Dashboard | 4 THE PEOPLE';
+      }
     } catch (err) {
       console.error('Error fetching club dashboard:', err);
       const status = err.response?.status;
@@ -372,36 +377,36 @@ const ManagerClubDetailPage = () => {
 
       {/* Back Button */}
       <button
-        onClick={() => navigate('/manager')}
-        className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+        onClick={() => navigate('/manager/clubs')}
+        className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#0F172A] hover:text-[#FF5733] px-4 py-2 rounded-full bg-white border border-[#E2E0D5] hover:border-[#FF5733] transition-all shadow-xs cursor-pointer"
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="w-4 h-4 text-[#FF5733]" />
         <span>Back to My Clubs</span>
       </button>
 
       {/* Loading Skeleton */}
       {loading ? (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 animate-pulse space-y-4">
-          <div className="h-8 bg-slate-800 rounded w-1/3" />
-          <div className="h-4 bg-slate-800 rounded w-2/3" />
+        <div className="bg-white border border-[#E2E0D5] rounded-3xl p-8 animate-pulse space-y-4">
+          <div className="h-8 bg-[#FAF9F5] rounded w-1/3" />
+          <div className="h-4 bg-[#FAF9F5] rounded w-2/3" />
         </div>
       ) : error ? (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-10 text-center max-w-xl mx-auto space-y-5 my-8">
-          <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center mx-auto">
+        <div className="bg-white border border-[#E2E0D5] rounded-3xl p-10 text-center max-w-xl mx-auto space-y-5 my-8 shadow-sm">
+          <div className="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto">
             <ShieldAlert className="w-8 h-8" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-xl font-bold text-white">
+            <h2 className="font-['Syne',sans-serif] text-xl font-black text-[#0F172A] uppercase">
               {errorStatus === 403 ? 'Access Restricted' : errorStatus === 404 ? 'Club Not Found' : 'Unable to Load Club'}
             </h2>
-            <p className="text-slate-400 text-sm leading-relaxed">
+            <p className="text-[#64748B] text-xs font-medium leading-relaxed">
               {error}
             </p>
           </div>
           <div className="pt-2 flex justify-center gap-3">
             <button
               onClick={() => navigate('/manager/clubs')}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-sm rounded-xl transition shadow-lg shadow-purple-500/25"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#FF5733] hover:bg-[#E64A26] text-white font-extrabold text-xs uppercase tracking-wider rounded-full shadow-md transition"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to My Clubs</span>
@@ -409,7 +414,7 @@ const ManagerClubDetailPage = () => {
             {errorStatus !== 403 && errorStatus !== 404 && (
               <button
                 onClick={fetchClubDashboard}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm rounded-xl transition border border-slate-700"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#FAF9F5] hover:bg-[#F0EEE6] text-[#0F172A] font-extrabold text-xs uppercase tracking-wider rounded-full border border-[#E2E0D5] transition"
               >
                 <span>Retry</span>
               </button>
@@ -418,21 +423,21 @@ const ManagerClubDetailPage = () => {
         </div>
       ) : club ? (
         <div className="space-y-10">
-          
+
           {/* Club Header Banner with Presentational ClubHeader Component */}
           <div className="space-y-6">
             <ClubHeader club={club}>
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   onClick={() => setIsEditingInfo(!isEditingInfo)}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold rounded-xl border border-slate-700 transition"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#FAF9F5] hover:bg-[#F0EEE6] text-[#0F172A] text-xs font-extrabold uppercase tracking-wider rounded-full border border-[#E2E0D5] transition"
                 >
-                  <Edit3 className="w-4 h-4 text-purple-400" />
+                  <Edit3 className="w-4 h-4 text-[#FF5733]" />
                   <span>{isEditingInfo ? 'Cancel Edit' : 'Edit Info'}</span>
                 </button>
                 <button
                   onClick={() => setIsCreateEventModalOpen(true)}
-                  className="inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-sm font-semibold rounded-xl shadow-lg shadow-purple-500/20 transition-all hover:scale-[1.02]"
+                  className="inline-flex items-center gap-2 px-5 py-2 bg-[#FF5733] hover:bg-[#E64A26] text-white text-xs font-extrabold uppercase tracking-wider rounded-full shadow-md shadow-[#FF5733]/25 transition"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Create Event</span>
@@ -441,27 +446,27 @@ const ManagerClubDetailPage = () => {
             </ClubHeader>
 
             {/* Club Images & Branding Controls */}
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 lg:p-8 shadow-xl space-y-6">
-              <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2 border-b border-slate-800 pb-3">
-                <ImageIcon className="w-5 h-5 text-purple-400" />
+            <div className="bg-white border border-[#E2E0D5] rounded-3xl p-6 lg:p-8 shadow-sm space-y-6">
+              <h2 className="font-['Syne',sans-serif] text-lg font-black text-[#0F172A] uppercase tracking-tight flex items-center gap-2 border-b border-[#E8E6DF] pb-3">
+                <ImageIcon className="w-5 h-5 text-[#FF5733]" />
                 <span>Club Media & Branding</span>
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* 1. Cover Image Upload Options */}
-                <div className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800/80 space-y-4">
+                <div className="p-5 rounded-2xl bg-[#FAF9F5] border border-[#E2E0D5] space-y-4">
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-pink-400" />
+                    <h3 className="text-xs font-black uppercase text-[#0F172A] flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-[#FF5733]" />
                       <span>Club Cover Image</span>
                     </h3>
-                    <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                    <p className="text-xs text-[#64748B] font-medium mt-1 leading-relaxed">
                       Upload a high-resolution cover image to display full-bleed at the top of your club page.
                     </p>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3 pt-2">
-                    <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-xs font-semibold rounded-xl shadow-md transition">
+                    <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-[#FF5733] hover:bg-[#E64A26] text-white text-xs font-extrabold uppercase tracking-wider rounded-full shadow-md transition">
                       {coverUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                       <span>{(club.coverImageUrl || club.coverUrl || club.coverImage?.url || club.cover?.url) ? 'Replace Cover Image' : 'Upload Cover Image'}</span>
                       <input
@@ -477,7 +482,7 @@ const ManagerClubDetailPage = () => {
                       <button
                         onClick={handleCoverDelete}
                         disabled={coverUploading || coverDeleting}
-                        className="inline-flex items-center gap-1.5 px-3 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-semibold rounded-xl transition"
+                        className="inline-flex items-center gap-1.5 px-3 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-extrabold uppercase tracking-wider rounded-full transition"
                       >
                         {coverDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                         <span>Remove Cover</span>
@@ -487,21 +492,21 @@ const ManagerClubDetailPage = () => {
                 </div>
 
                 {/* 2. Logo Upload Options */}
-                <div className="p-5 rounded-2xl bg-slate-950/60 border border-slate-800/80 space-y-4">
+                <div className="p-5 rounded-2xl bg-[#FAF9F5] border border-[#E2E0D5] space-y-4">
                   <div>
-                    <h3 className="text-sm font-semibold text-slate-200 flex items-center gap-2">
-                      <Building2 className="w-4 h-4 text-indigo-400" />
+                    <h3 className="text-xs font-black uppercase text-[#0F172A] flex items-center gap-2">
+                      <Building2 className="w-4 h-4 text-[#2563EB]" />
                       <span>Club Square Logo</span>
                     </h3>
-                    <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                      Upload a square logo that overlaps the bottom edge of the cover header.
+                    <p className="text-xs text-[#64748B] font-medium mt-1 leading-relaxed">
+                      Upload a square logo image to represent your club avatar across event pages.
                     </p>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-3 pt-2">
-                    <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold rounded-xl transition">
+                    <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-extrabold uppercase tracking-wider rounded-full shadow-md transition">
                       {logoUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                      <span>{club.logo?.url ? 'Replace Logo' : 'Upload Logo'}</span>
+                      <span>{(club.logoUrl || club.logo?.url) ? 'Replace Logo' : 'Upload Logo'}</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -511,11 +516,11 @@ const ManagerClubDetailPage = () => {
                       />
                     </label>
 
-                    {club.logo?.url && (
+                    {(club.logoUrl || club.logo?.url) && (
                       <button
                         onClick={handleLogoDelete}
                         disabled={logoUploading || logoDeleting}
-                        className="inline-flex items-center gap-1.5 px-3 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-semibold rounded-xl transition"
+                        className="inline-flex items-center gap-1.5 px-3 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-extrabold uppercase tracking-wider rounded-full transition"
                       >
                         {logoDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                         <span>Remove Logo</span>
@@ -524,84 +529,86 @@ const ManagerClubDetailPage = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Collapsible Edit Info Form */}
+              {isEditingInfo && (
+                <form onSubmit={handleUpdateClubInfo} className="p-5 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl space-y-4">
+                  <h3 className="font-['Syne',sans-serif] text-base font-black text-[#0F172A] uppercase">
+                    Edit Club Information
+                  </h3>
+
+                  {clubFormError && (
+                    <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold rounded-xl flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <span>{clubFormError}</span>
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-xs font-extrabold uppercase text-[#0F172A] mb-1">
+                      Club Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={clubName}
+                      onChange={(e) => setClubName(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-white border border-[#E2E0D5] rounded-2xl text-[#0F172A] text-xs font-medium focus:outline-none focus:border-[#FF5733]"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-extrabold uppercase text-[#0F172A] mb-1">
+                      Description
+                    </label>
+                    <textarea
+                      rows={4}
+                      value={clubDescription}
+                      onChange={(e) => setClubDescription(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-white border border-[#E2E0D5] rounded-2xl text-[#0F172A] text-xs font-medium focus:outline-none focus:border-[#FF5733] resize-none"
+                    />
+                  </div>
+
+                  <div className="flex justify-end gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingInfo(false)}
+                      className="px-4 py-2 bg-white border border-[#E2E0D5] text-[#0F172A] text-xs font-extrabold uppercase tracking-wider rounded-full hover:bg-[#F0EEE6]"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={updatingClub}
+                      className="px-5 py-2 bg-[#FF5733] hover:bg-[#E64A26] text-white text-xs font-extrabold uppercase tracking-wider rounded-full shadow-md disabled:opacity-50"
+                    >
+                      {updatingClub ? 'Saving...' : 'Save Changes'}
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
           </div>
 
-            {/* Editable Club Info Inline Form */}
-            {isEditingInfo && (
-              <form onSubmit={handleUpdateClubInfo} className="p-5 bg-slate-950/60 border border-slate-800 rounded-2xl space-y-4">
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Edit Club Information</h3>
-                
-                {clubFormError && (
-                  <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 text-xs flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 shrink-0" />
-                    <span>{clubFormError}</span>
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
-                    Club Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={clubName}
-                    onChange={(e) => setClubName(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
-                    Description
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={clubDescription}
-                    onChange={(e) => setClubDescription(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500 resize-none"
-                  />
-                </div>
-
-                <div className="flex items-center justify-end gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsEditingInfo(false)}
-                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-xl transition"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={updatingClub}
-                    className="inline-flex items-center gap-2 px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-semibold rounded-xl shadow-md transition disabled:opacity-50"
-                  >
-                    {updatingClub ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>Save Changes</span>}
-                  </button>
-                </div>
-              </form>
-            )}
-
-          {/* Members Section (Read-Only) */}
-          <div className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 lg:p-8 space-y-6 shadow-xl">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          {/* Members Section */}
+          <div className="bg-white border border-[#E2E0D5] rounded-3xl p-6 lg:p-8 space-y-6 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E8E6DF] pb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
+                <div className="p-2.5 bg-[#FF5733]/10 text-[#FF5733] rounded-xl">
                   <Users className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white tracking-tight">Club Members</h2>
-                  <p className="text-xs text-slate-400">View managers and members assigned to this club (Read-Only)</p>
+                  <h2 className="font-['Syne',sans-serif] text-xl font-black text-[#0F172A] uppercase tracking-tight">Club Members</h2>
+                  <p className="text-xs text-[#64748B] font-medium">Managers and members assigned to this club</p>
                 </div>
               </div>
-              <span className="self-start sm:self-center px-3 py-1 bg-slate-800 text-slate-300 rounded-full text-xs font-semibold border border-slate-700">
+              <span className="self-start sm:self-center px-3 py-1 bg-[#FAF9F5] text-[#0F172A] rounded-full text-xs font-black uppercase tracking-wider border border-[#E2E0D5]">
                 {club.members?.length || 0} Member{(club.members?.length || 0) === 1 ? '' : 's'}
               </span>
             </div>
 
             {(!club.members || club.members.length === 0) ? (
-              <div className="py-8 text-center text-slate-400 text-sm">
+              <div className="py-8 text-center text-[#64748B] text-xs font-medium">
                 No members found for this club.
               </div>
             ) : (
@@ -615,25 +622,25 @@ const ManagerClubDetailPage = () => {
                   return (
                     <div
                       key={member.id || member.userId || email}
-                      className="p-4 bg-slate-950/60 border border-slate-800 rounded-2xl flex items-center justify-between gap-3 shadow-sm hover:border-slate-700 transition"
+                      className="p-4 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl flex items-center justify-between gap-3 shadow-xs"
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-900/60 to-indigo-900/60 border border-purple-500/30 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                        <div className="w-10 h-10 rounded-xl bg-[#FF5733] flex items-center justify-center text-white font-['Syne',sans-serif] font-black text-sm shrink-0 shadow-xs">
                           {name.slice(0, 2).toUpperCase()}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm font-semibold text-white truncate">{name}</p>
-                          <p className="text-xs text-slate-400 truncate">{email}</p>
+                          <p className="text-xs font-extrabold text-[#0F172A] truncate">{name}</p>
+                          <p className="text-[10px] text-[#64748B] font-medium truncate">{email}</p>
                         </div>
                       </div>
 
                       {isManager ? (
-                        <span className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-sm">
-                          <ShieldCheck className="w-3 h-3 text-purple-400" />
+                        <span className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-black rounded-full bg-[#2563EB]/10 text-[#2563EB] tracking-wider uppercase">
+                          <ShieldCheck className="w-3 h-3" />
                           MANAGER
                         </span>
                       ) : (
-                        <span className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-semibold rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                        <span className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold rounded-full bg-white text-[#64748B] border border-[#E2E0D5]">
                           <UserCheck className="w-3 h-3" />
                           MEMBER
                         </span>
@@ -647,56 +654,52 @@ const ManagerClubDetailPage = () => {
 
           {/* Events Section */}
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E8E6DF] pb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/20">
+                <div className="p-2.5 bg-[#2563EB]/10 text-[#2563EB] rounded-xl">
                   <Calendar className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-white tracking-tight">Club Events</h2>
-                  <p className="text-xs text-slate-400">All events including upcoming, completed, and cancelled</p>
+                  <h2 className="font-['Syne',sans-serif] text-2xl font-black text-[#0F172A] uppercase tracking-tight">Club Events</h2>
+                  <p className="text-xs text-[#64748B] font-medium">All upcoming, completed, and cancelled club events</p>
                 </div>
               </div>
 
               {/* Status Filter Tabs */}
-              <div className="flex items-center gap-1.5 p-1 bg-slate-900 border border-slate-800 rounded-2xl overflow-x-auto">
+              <div className="flex items-center gap-1.5 p-1 bg-[#FAF9F5] border border-[#E2E0D5] rounded-full overflow-x-auto">
                 <button
                   onClick={() => setStatusFilter('ALL')}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition ${
-                    statusFilter === 'ALL'
-                      ? 'bg-purple-600 text-white shadow-md'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                  }`}
+                  className={`px-3.5 py-1.5 text-xs font-extrabold uppercase tracking-wider rounded-full transition ${statusFilter === 'ALL'
+                      ? 'bg-[#0F172A] text-white shadow-xs'
+                      : 'text-[#64748B] hover:text-[#0F172A] hover:bg-white'
+                    }`}
                 >
                   All ({events.length})
                 </button>
                 <button
                   onClick={() => setStatusFilter('UPCOMING_ONGOING')}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition ${
-                    statusFilter === 'UPCOMING_ONGOING'
-                      ? 'bg-purple-600 text-white shadow-md'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                  }`}
+                  className={`px-3.5 py-1.5 text-xs font-extrabold uppercase tracking-wider rounded-full transition ${statusFilter === 'UPCOMING_ONGOING'
+                      ? 'bg-[#0F172A] text-white shadow-xs'
+                      : 'text-[#64748B] hover:text-[#0F172A] hover:bg-white'
+                    }`}
                 >
-                  Upcoming / Ongoing ({upcomingOngoingCount})
+                  Upcoming ({upcomingOngoingCount})
                 </button>
                 <button
                   onClick={() => setStatusFilter('COMPLETED')}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition ${
-                    statusFilter === 'COMPLETED'
-                      ? 'bg-purple-600 text-white shadow-md'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                  }`}
+                  className={`px-3.5 py-1.5 text-xs font-extrabold uppercase tracking-wider rounded-full transition ${statusFilter === 'COMPLETED'
+                      ? 'bg-[#0F172A] text-white shadow-xs'
+                      : 'text-[#64748B] hover:text-[#0F172A] hover:bg-white'
+                    }`}
                 >
                   Completed ({completedCount})
                 </button>
                 <button
                   onClick={() => setStatusFilter('CANCELLED')}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-xl transition ${
-                    statusFilter === 'CANCELLED'
-                      ? 'bg-purple-600 text-white shadow-md'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800'
-                  }`}
+                  className={`px-3.5 py-1.5 text-xs font-extrabold uppercase tracking-wider rounded-full transition ${statusFilter === 'CANCELLED'
+                      ? 'bg-[#0F172A] text-white shadow-xs'
+                      : 'text-[#64748B] hover:text-[#0F172A] hover:bg-white'
+                    }`}
                 >
                   Cancelled ({cancelledCount})
                 </button>
@@ -739,9 +742,9 @@ const ManagerClubDetailPage = () => {
                   <div
                     key={evt.id}
                     onClick={() => navigate(`/manager/clubs/${clubId}/events/${evt.id}`)}
-                    className="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-purple-500/50 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col cursor-pointer"
+                    className="group bg-white hover:bg-[#FAF9F5] border border-[#E2E0D5] hover:border-[#FF5733] rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer"
                   >
-                    <div className="relative h-44 w-full bg-slate-800 overflow-hidden">
+                    <div className="relative h-44 w-full bg-[#FAF9F5] overflow-hidden border-b border-[#E8E6DF]">
                       {evt.coverImage?.url ? (
                         <img
                           src={evt.coverImage.url}
@@ -749,23 +752,22 @@ const ManagerClubDetailPage = () => {
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-purple-900/40 via-slate-900 to-indigo-900/40 flex items-center justify-center p-4">
-                          <Sparkles className="w-8 h-8 text-purple-400/80" />
+                        <div className="w-full h-full bg-[#FAF9F5] flex items-center justify-center p-4">
+                          <Sparkles className="w-8 h-8 text-[#FF5733]/40" />
                         </div>
                       )}
 
                       {/* Event Status Badge */}
                       <div className="absolute top-3 right-3">
                         <span
-                          className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full border backdrop-blur-md shadow-md ${
-                            evt.status === 'ONGOING'
-                              ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                          className={`px-3 py-1 text-[10px] font-black uppercase tracking-wider rounded-full border shadow-sm ${evt.status === 'ONGOING'
+                              ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
                               : evt.status === 'COMPLETED'
-                              ? 'bg-blue-500/20 text-blue-300 border-blue-500/40'
-                              : evt.status === 'CANCELLED'
-                              ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
-                              : 'bg-purple-500/20 text-purple-300 border-purple-500/40'
-                          }`}
+                                ? 'bg-blue-100 text-blue-800 border-blue-200'
+                                : evt.status === 'CANCELLED'
+                                  ? 'bg-rose-100 text-rose-800 border-rose-200'
+                                  : 'bg-[#FF5733] text-white border-[#FF5733]'
+                            }`}
                         >
                           {evt.status || 'UPCOMING'}
                         </span>
@@ -774,22 +776,22 @@ const ManagerClubDetailPage = () => {
 
                     <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                       <div className="space-y-2">
-                        <h3 className="text-lg font-bold text-white group-hover:text-purple-300 transition line-clamp-1">
+                        <h3 className="font-['Syne',sans-serif] text-base font-black text-[#0F172A] group-hover:text-[#FF5733] transition line-clamp-1">
                           {evt.title}
                         </h3>
-                        <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                        <p className="text-xs text-[#64748B] font-medium line-clamp-2 leading-relaxed">
                           {evt.description}
                         </p>
                       </div>
 
-                      <div className="pt-3 border-t border-slate-800/80 space-y-1.5 text-xs text-slate-300 font-medium">
+                      <div className="pt-3 border-t border-[#E8E6DF] space-y-1.5 text-xs text-[#64748B] font-semibold">
                         <div className="flex items-center gap-2">
-                          <Calendar className="w-3.5 h-3.5 text-purple-400 shrink-0" />
+                          <Calendar className="w-3.5 h-3.5 text-[#FF5733] shrink-0" />
                           <span>{formatDate(evt.startAt)} • {formatTime(evt.startAt)}</span>
                         </div>
                         {evt.location && (
-                          <div className="flex items-center gap-2 text-slate-400">
-                            <MapPin className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                          <div className="flex items-center gap-2 text-[#64748B]">
+                            <MapPin className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />
                             <span className="truncate">{evt.location}</span>
                           </div>
                         )}

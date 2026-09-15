@@ -10,9 +10,12 @@ const Login = ({ role: propsRole }) => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  // Determine effective role: propsRole first, fallback to location pathname
   const effectiveRole = propsRole || (location.pathname.includes('admin') ? 'admin' : 'manager');
   const isAdmin = effectiveRole === 'admin';
+
+  React.useEffect(() => {
+    document.title = `${isAdmin ? 'Admin Login' : 'Manager Login'} | 4 THE PEOPLE`;
+  }, [isAdmin]);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -154,8 +157,8 @@ const Login = ({ role: propsRole }) => {
         <div className="text-center mb-8 pt-4">
           <div
             className={`inline-flex p-3 rounded-2xl shadow-lg mb-4 text-white ${isAdmin
-                ? 'bg-gradient-to-tr from-indigo-500 to-purple-600 shadow-indigo-500/25'
-                : 'bg-gradient-to-tr from-purple-500 to-indigo-600 shadow-purple-500/25'
+              ? 'bg-gradient-to-tr from-indigo-500 to-purple-600 shadow-indigo-500/25'
+              : 'bg-gradient-to-tr from-purple-500 to-indigo-600 shadow-purple-500/25'
               }`}
           >
             {isAdmin ? <ShieldCheck className="w-8 h-8" /> : <UserCheck className="w-8 h-8" />}
@@ -305,8 +308,8 @@ const Login = ({ role: propsRole }) => {
               type="submit"
               disabled={submitting}
               className={`w-full flex items-center justify-center gap-2 py-3 px-4 text-white font-semibold text-sm rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:pointer-events-none ${isAdmin
-                  ? 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-indigo-500/25'
-                  : 'bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 shadow-purple-500/25'
+                ? 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-indigo-500/25'
+                : 'bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 shadow-purple-500/25'
                 }`}
             >
               {submitting ? (

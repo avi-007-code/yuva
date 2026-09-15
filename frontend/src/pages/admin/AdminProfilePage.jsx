@@ -39,6 +39,7 @@ const AdminProfilePage = () => {
   const [avatarDeleting, setAvatarDeleting] = useState(false);
 
   useEffect(() => {
+    document.title = 'Admin Profile | 4 THE PEOPLE';
     fetchProfile();
   }, []);
 

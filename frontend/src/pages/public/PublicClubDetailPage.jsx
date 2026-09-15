@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { publicApi } from '../../api/publicApi';
-import ClubHeader from '../../components/ClubHeader';
 import PublicLayout from '../../components/public/PublicLayout';
 import EventModal from '../../components/public/EventModal';
 import GalleryLightbox from '../../components/public/GalleryLightbox';
-import EmptyState from '../../components/common/EmptyState';
-import { EventCardSkeleton } from '../../components/common/CardSkeleton';
 import { getCloudinaryUrl, CLOUDINARY_TRANSFORMS } from '../../utils/cloudinary';
+import { getClubCoverImage } from '../../utils/clubCovers';
 import {
   ArrowLeft,
   Building2,
@@ -19,56 +17,40 @@ import {
   RefreshCw,
   Image as ImageIcon,
   Clock,
-  ExternalLink,
+  Users,
+  ArrowRight,
+  ShieldCheck,
+  Mail,
 } from 'lucide-react';
 
-const formatDate = (dateStr) => {
-  if (!dateStr) return 'TBA';
-  const d = new Date(dateStr);
-  if (isNaN(d.getTime())) return dateStr;
-  return d.toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-};
-
-const formatTime = (dateStr) => {
-  if (!dateStr) return '';
-  const d = new Date(dateStr);
-  if (isNaN(d.getTime())) return '';
-  return d.toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  });
+const formatDateParts = (dateString) => {
+  if (!dateString) return { day: '15', month: 'SEP' };
+  const dateObj = new Date(dateString);
+  if (isNaN(dateObj.getTime())) return { day: '15', month: 'SEP' };
+  const day = dateObj.getDate().toString().padStart(2, '0');
+  const month = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+  return { day, month };
 };
 
 const PublicClubDetailPage = () => {
   const { clubId } = useParams();
   const navigate = useNavigate();
 
-  // State for Club Header
   const [club, setClub] = useState(null);
   const [clubLoading, setClubLoading] = useState(true);
   const [clubError, setClubError] = useState(null);
 
-  // State for Upcoming Events section
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [upcomingLoading, setUpcomingLoading] = useState(true);
   const [upcomingError, setUpcomingError] = useState(null);
 
-  // State for Past Events section
   const [pastEvents, setPastEvents] = useState([]);
   const [pastLoading, setPastLoading] = useState(true);
   const [pastError, setPastError] = useState(null);
 
-  // Modal / Lightbox State
   const [selectedEventModal, setSelectedEventModal] = useState(null);
   const [activeGalleryEvent, setActiveGalleryEvent] = useState(null);
 
-  // 1. Fetch Club Information
   const fetchClubInfo = async () => {
     try {
       setClubLoading(true);
@@ -88,7 +70,6 @@ const PublicClubDetailPage = () => {
     }
   };
 
-  // 2. Fetch Upcoming Events
   const fetchUpcomingEvents = async () => {
     try {
       setUpcomingLoading(true);
@@ -107,7 +88,6 @@ const PublicClubDetailPage = () => {
     }
   };
 
-  // 3. Fetch Past Events
   const fetchPastEvents = async () => {
     try {
       setPastLoading(true);
@@ -127,6 +107,14 @@ const PublicClubDetailPage = () => {
   };
 
   useEffect(() => {
+    if (club?.name) {
+      document.title = `${club.name} | 4 THE PEOPLE`;
+    } else {
+      document.title = 'Club Details | 4 THE PEOPLE';
+    }
+  }, [club]);
+
+  useEffect(() => {
     if (clubId) {
       fetchClubInfo();
       fetchUpcomingEvents();
@@ -134,167 +122,134 @@ const PublicClubDetailPage = () => {
     }
   }, [clubId]);
 
-  const initials = club?.name ? club.name.slice(0, 2).toUpperCase() : 'CL';
-
   return (
     <PublicLayout>
-      <div className="space-y-12">
-        
-        {/* Back Link */}
-        <div>
-          <button
-            onClick={() => navigate('/clubs')}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded-xl text-xs font-semibold text-slate-300 hover:text-white transition"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Clubs</span>
-          </button>
-        </div>
+      <div className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
 
-        {/* Club Header Section */}
+        {/* Back Link */}
+        <button
+          onClick={() => navigate('/clubs')}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-xs font-extrabold uppercase text-gray-300 hover:text-white hover:border-white/20 transition cursor-pointer"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span>Back to All Clubs</span>
+        </button>
+
+        {/* Club Profile Hero Section */}
         {clubLoading ? (
-          <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-8 animate-pulse space-y-4">
-            <div className="flex items-center gap-6">
-              <div className="w-20 h-20 bg-slate-800 rounded-2xl shrink-0" />
-              <div className="space-y-3 flex-1">
-                <div className="h-8 bg-slate-800 rounded w-1/3" />
-                <div className="h-4 bg-slate-800 rounded w-full max-w-lg" />
-              </div>
-            </div>
-          </div>
+          <div className="h-64 rounded-3xl bg-white/5 border border-white/5 animate-pulse" />
         ) : clubError ? (
-          <div className="p-8 bg-rose-500/10 border border-rose-500/30 rounded-3xl text-center space-y-4">
-            <AlertCircle className="w-10 h-10 text-rose-400 mx-auto" />
-            <h2 className="text-xl font-bold text-white">Club Not Found</h2>
-            <p className="text-sm text-rose-300">{clubError}</p>
+          <div className="p-8 bg-red-500/10 border border-red-500/20 rounded-3xl text-center space-y-4">
+            <AlertCircle className="w-10 h-10 text-red-400 mx-auto" />
+            <h2 className="text-xl font-extrabold text-white font-['Syne',sans-serif]">Club Not Found</h2>
+            <p className="text-sm text-red-300">{clubError}</p>
             <button
               onClick={fetchClubInfo}
-              className="px-5 py-2.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 rounded-xl text-xs font-bold uppercase tracking-wider transition"
+              className="px-5 py-2.5 bg-red-500/20 text-red-200 rounded-full text-xs font-bold uppercase"
             >
               Retry
             </button>
           </div>
         ) : club ? (
-          <ClubHeader club={club} />
+          <div className="rounded-3xl bg-[#12141C] border border-white/10 overflow-hidden shadow-2xl">
+            <div className="relative h-56 sm:h-72 bg-gray-900 overflow-hidden">
+              <img
+                src={getClubCoverImage(club)}
+                alt={club.name}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#12141C] via-black/30 to-transparent" />
+
+              <div className="absolute top-4 right-4">
+                <span className="px-3.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/15 text-[10px] font-extrabold uppercase tracking-widest text-[#00F0FF]">
+                  {club.category || "CAMPUS ORGANIZATION"}
+                </span>
+              </div>
+            </div>
+
+            <div className="p-6 sm:p-10 pt-0 relative">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 -mt-12 sm:-mt-16 mb-6">
+                <div className="flex items-end gap-4">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl overflow-hidden border-4 border-[#12141C] shadow-xl bg-gray-900 shrink-0">
+                    <img
+                      src={club.logoUrl || club.coverImage || "https://images.unsplash.com/photo-1531403009284-440f080d1e12?q=80&w=200&auto=format&fit=crop"}
+                      alt={club.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black uppercase text-[#00F0FF] tracking-widest">{club.category}</span>
+                    <h1 className="font-['Syne',sans-serif] text-3xl sm:text-4xl font-extrabold text-white uppercase tracking-tight">
+                      {club.name}
+                    </h1>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-300 text-xs font-bold">
+                    {club._count?.members || club.membersCount || 100}+ Members
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-gray-300 text-sm leading-relaxed max-w-4xl font-normal">
+                {club.description || "Active student organization committed to fostering skills, projects, and collaboration across campus."}
+              </p>
+            </div>
+          </div>
         ) : null}
 
-        {/* SECTION A: Upcoming Events */}
+        {/* Upcoming Events Section */}
         <section className="space-y-6">
-          <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/20">
-                <Calendar className="w-5 h-5" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-white tracking-tight">Upcoming Events</h2>
-                <p className="text-xs text-slate-400">Scheduled events for {club?.name || 'this club'}</p>
-              </div>
+          <div className="flex items-center justify-between border-b border-white/10 pb-4">
+            <div>
+              <span className="text-xs font-extrabold uppercase text-[#00F0FF]">Live Schedule</span>
+              <h2 className="font-['Syne',sans-serif] text-2xl font-extrabold text-white uppercase">
+                Upcoming <span className="text-[#00F0FF]">Events</span>
+              </h2>
             </div>
-            <span className="text-xs text-slate-400 font-medium">
-              {!upcomingLoading && !upcomingError && `${upcomingEvents.length} event${upcomingEvents.length === 1 ? '' : 's'}`}
-            </span>
           </div>
 
-          {/* Error */}
-          {upcomingError && (
-            <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl flex items-center justify-between text-rose-300 text-sm">
-              <span>{upcomingError}</span>
-              <button
-                onClick={fetchUpcomingEvents}
-                className="px-3 py-1 bg-rose-500/20 rounded-lg text-xs font-bold uppercase transition"
-              >
-                Retry
-              </button>
+          {upcomingLoading ? (
+            <div className="text-center py-12 text-gray-400 text-sm">Loading upcoming events...</div>
+          ) : upcomingError ? (
+            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm">{upcomingError}</div>
+          ) : upcomingEvents.length === 0 ? (
+            <div className="text-center py-12 bg-[#12141C] rounded-3xl border border-white/10 text-gray-400 text-sm">
+              No upcoming events currently scheduled for {club?.name || 'this club'}.
             </div>
-          )}
-
-          {/* Loading */}
-          {upcomingLoading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <EventCardSkeleton />
-              <EventCardSkeleton />
-            </div>
-          )}
-
-          {/* Empty */}
-          {!upcomingLoading && !upcomingError && upcomingEvents.length === 0 && (
-            <EmptyState
-              icon={Calendar}
-              title="No Upcoming Events"
-              description={`There are currently no upcoming events scheduled for ${club?.name || 'this club'}.`}
-            />
-          )}
-
-          {/* Upcoming Events Grid */}
-          {!upcomingLoading && !upcomingError && upcomingEvents.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {upcomingEvents.map((evt) => {
-                const rawCoverUrl = evt.coverImage?.url || evt.coverImageUrl || evt.coverUrl;
-                const coverUrl = getCloudinaryUrl(rawCoverUrl, CLOUDINARY_TRANSFORMS.COVER);
-                const redirectUrl = evt.registrationUrl || evt.url || evt.externalUrl || evt.link;
-
+                const dateParts = formatDateParts(evt.date || evt.startDate);
                 return (
                   <div
                     key={evt.id}
-                    onClick={() => setSelectedEventModal(evt)}
-                    className="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-slate-700/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col cursor-pointer"
+                    onClick={() => navigate(`/clubs/${clubId}/events/${evt.id}`)}
+                    className="group rounded-2xl overflow-hidden bg-[#12141C] border border-white/10 hover:border-cyan-500/40 transition-all p-5 cursor-pointer flex flex-col justify-between"
                   >
-                    <div className="relative h-44 w-full bg-slate-800 overflow-hidden">
-                      {coverUrl ? (
-                        <img
-                          src={coverUrl}
-                          alt={evt.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-indigo-900/40 via-purple-900/30 to-slate-900 flex items-center justify-center p-4">
-                          <Sparkles className="w-8 h-8 text-indigo-400/80" />
+                    <div>
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-12 h-12 rounded-xl bg-black border border-white/20 text-white flex flex-col items-center justify-center font-['Syne',sans-serif] leading-none shrink-0">
+                          <span className="text-[9px] text-[#00F0FF] font-bold uppercase">{dateParts.month}</span>
+                          <span className="text-lg font-black">{dateParts.day}</span>
                         </div>
-                      )}
-
-                      <div className="absolute top-3 right-3">
-                        <span className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 backdrop-blur-md">
-                          {evt.status || 'UPCOMING'}
-                        </span>
+                        <div>
+                          <h3 className="font-['Syne',sans-serif] text-lg font-bold text-white group-hover:text-[#00F0FF] transition-colors line-clamp-1">
+                            {evt.title}
+                          </h3>
+                          <span className="text-xs text-gray-400">{evt.location || "Main Auditorium"}</span>
+                        </div>
                       </div>
+
+                      <p className="text-xs text-gray-300 line-clamp-2 leading-relaxed mb-4">
+                        {evt.description}
+                      </p>
                     </div>
 
-                    <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                      <div className="space-y-2">
-                        <h3 className="text-lg font-bold text-white group-hover:text-indigo-300 transition line-clamp-1">
-                          {evt.title}
-                        </h3>
-                        <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
-                          {evt.description}
-                        </p>
-                      </div>
-
-                      <div className="pt-3 border-t border-slate-800/80 space-y-2 text-xs text-slate-300 font-medium">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-                          <span>{formatDate(evt.startAt)} • {formatTime(evt.startAt)}</span>
-                        </div>
-                        {evt.location && (
-                          <div className="flex items-center gap-2 text-slate-400">
-                            <MapPin className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-                            <span className="truncate">{evt.location}</span>
-                          </div>
-                        )}
-
-                        {redirectUrl && (
-                          <div onClick={(e) => e.stopPropagation()} className="pt-1">
-                            <a
-                              href={redirectUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500/30 hover:to-pink-500/30 text-pink-300 border border-pink-500/30 text-xs font-bold uppercase tracking-wider rounded-xl transition"
-                            >
-                              <ExternalLink className="w-3.5 h-3.5" />
-                              <span>Register Link</span>
-                            </a>
-                          </div>
-                        )}
-                      </div>
+                    <div className="pt-3 border-t border-white/5 flex items-center justify-between text-xs font-bold text-[#00F0FF]">
+                      <span>RSVP Open</span>
+                      <span className="group-hover:translate-x-1 transition-transform">View Details →</span>
                     </div>
                   </div>
                 );
@@ -303,131 +258,64 @@ const PublicClubDetailPage = () => {
           )}
         </section>
 
-        {/* SECTION B: Past Events & Photo Gallery */}
+        {/* Past Events & Gallery Section */}
         <section className="space-y-6 pt-6">
-          <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
-                <History className="w-5 h-5" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-white tracking-tight">Past Events & Photo Gallery</h2>
-                <p className="text-xs text-slate-400">Click any past event to view its photo gallery</p>
-              </div>
+          <div className="flex items-center justify-between border-b border-white/10 pb-4">
+            <div>
+              <span className="text-xs font-extrabold uppercase text-purple-400">Archives</span>
+              <h2 className="font-['Syne',sans-serif] text-2xl font-extrabold text-white uppercase">
+                Past Events & <span className="text-purple-400">Gallery</span>
+              </h2>
             </div>
-            <span className="text-xs text-slate-400 font-medium">
-              {!pastLoading && !pastError && `${pastEvents.length} event${pastEvents.length === 1 ? '' : 's'}`}
-            </span>
           </div>
 
-          {/* Error */}
-          {pastError && (
-            <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl flex items-center justify-between text-rose-300 text-sm">
-              <span>{pastError}</span>
-              <button
-                onClick={fetchPastEvents}
-                className="px-3 py-1 bg-rose-500/20 rounded-lg text-xs font-bold uppercase transition"
-              >
-                Retry
-              </button>
-            </div>
-          )}
-
-          {/* Loading */}
-          {pastLoading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <EventCardSkeleton />
-              <EventCardSkeleton />
-            </div>
-          )}
-
-          {/* Empty */}
           {!pastLoading && !pastError && pastEvents.length === 0 && (
-            <EmptyState
-              icon={History}
-              title="No Past Events"
-              description={`No completed past events have been archived for ${club?.name || 'this club'} yet.`}
-            />
+            <div className="text-center py-12 bg-[#12141C] rounded-3xl border border-white/10 text-gray-400 text-sm">
+              No completed past events recorded yet.
+            </div>
           )}
 
-          {/* Past Events Grid */}
           {!pastLoading && !pastError && pastEvents.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {pastEvents.map((evt) => {
-                const rawCoverUrl = evt.coverImage?.url || evt.coverImageUrl || evt.coverUrl;
-                const coverUrl = getCloudinaryUrl(rawCoverUrl, CLOUDINARY_TRANSFORMS.COVER);
-                const galleryCount = Array.isArray(evt.gallery) ? evt.gallery.length : 0;
-
-                return (
-                  <div
-                    key={evt.id}
-                    onClick={() => setActiveGalleryEvent(evt)}
-                    className="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-slate-700/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col cursor-pointer"
-                  >
-                    <div className="relative h-44 w-full bg-slate-800 overflow-hidden">
-                      {coverUrl ? (
-                        <img
-                          src={coverUrl}
-                          alt={evt.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-purple-900/40 via-slate-900 to-indigo-900/40 flex items-center justify-center p-4">
-                          <ImageIcon className="w-8 h-8 text-purple-400/80" />
-                        </div>
-                      )}
-
-                      <div className="absolute top-3 right-3">
-                        <span className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40 backdrop-blur-md">
-                          COMPLETED
-                        </span>
-                      </div>
-
-                      {galleryCount > 0 && (
-                        <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-lg bg-slate-950/80 border border-slate-700/60 text-[11px] font-bold text-white flex items-center gap-1.5 backdrop-blur-md">
-                          <ImageIcon className="w-3.5 h-3.5 text-purple-400" />
-                          <span>{galleryCount} Photos</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                      <div className="space-y-2">
-                        <h3 className="text-lg font-bold text-white group-hover:text-purple-300 transition line-clamp-1">
-                          {evt.title}
-                        </h3>
-                        <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
-                          {evt.description}
-                        </p>
-                      </div>
-
-                      <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 font-medium">
-                        <div className="flex items-center gap-1.5">
-                          <Calendar className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-                          <span>{formatDate(evt.startAt)}</span>
-                        </div>
-                        <span className="text-purple-400 font-bold group-hover:underline">
-                          View Gallery →
-                        </span>
-                      </div>
+              {pastEvents.map((evt) => (
+                <div
+                  key={evt.id}
+                  onClick={() => setActiveGalleryEvent(evt)}
+                  className="group bg-[#12141C] border border-white/10 hover:border-purple-400/50 rounded-3xl overflow-hidden transition-all duration-300 cursor-pointer flex flex-col justify-between"
+                >
+                  <div className="relative h-44 w-full bg-gray-900 overflow-hidden">
+                    <img
+                      src={evt.coverUrl || evt.bannerUrl || "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=600&auto=format&fit=crop"}
+                      alt={evt.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40 text-[10px] font-bold uppercase backdrop-blur-md">
+                      COMPLETED
                     </div>
                   </div>
-                );
-              })}
+
+                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                    <div>
+                      <h3 className="font-['Syne',sans-serif] text-lg font-bold text-white group-hover:text-purple-300 transition line-clamp-1">
+                        {evt.title}
+                      </h3>
+                      <p className="text-xs text-gray-400 line-clamp-2 mt-1">
+                        {evt.description}
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-white/5 flex items-center justify-between text-xs text-purple-400 font-bold">
+                      <span>Completed Event</span>
+                      <span className="group-hover:underline">View Gallery →</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </section>
-      </div>
 
-      {/* Event Details Modal */}
-      {selectedEventModal && (
-        <EventModal
-          event={selectedEventModal}
-          club={club}
-          onClose={() => setSelectedEventModal(null)}
-          onOpenGallery={(evt) => setActiveGalleryEvent(evt)}
-        />
-      )}
+      </div>
 
       {/* Lightbox Photo Gallery */}
       {activeGalleryEvent && (
