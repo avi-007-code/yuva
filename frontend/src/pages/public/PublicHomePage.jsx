@@ -235,9 +235,6 @@ const PublicHomePage = () => {
         </div>
       </section>
 
-      {/* 2. CONTINUOUS MARQUEE TICKER */}
-      <MarqueeTicker />
-
       {/* 3. FEATURED CLUBS SECTION */}
       <section id="featured-clubs" className="py-24 bg-[#0B0C10] relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
