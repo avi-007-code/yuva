@@ -6,6 +6,7 @@ import PublicLayout from '../../components/public/PublicLayout';
 import EventModal from '../../components/public/EventModal';
 import GalleryLightbox from '../../components/public/GalleryLightbox';
 import MarqueeTicker from '../../components/public-demo/MarqueeTicker';
+import { getClubCoverImage } from '../../utils/clubCovers';
 import {
   ArrowRight,
   ArrowUpRight,
@@ -76,7 +77,7 @@ const PublicHomePage = () => {
   };
 
   useEffect(() => {
-    document.title = 'ClubHub | Discover Campus Clubs & Events';
+    document.title = '4 THE PEOPLE | Discover Campus Clubs & Events';
     fetchUpcomingEvents();
     fetchClubs();
   }, []);
@@ -113,7 +114,7 @@ const PublicHomePage = () => {
 
   return (
     <PublicLayout>
-      
+
       {/* 1. ASYMMETRIC EDITORIAL HERO SECTION */}
       <section className="relative pt-12 pb-16 md:pt-20 md:pb-24 flex items-center overflow-hidden bg-[#0B0C10]">
         {/* Dynamic Ambient Glow */}
@@ -121,7 +122,7 @@ const PublicHomePage = () => {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            
+
             {/* Left Headline */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -240,7 +241,7 @@ const PublicHomePage = () => {
       {/* 3. FEATURED CLUBS SECTION */}
       <section id="featured-clubs" className="py-24 bg-[#0B0C10] relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          
+
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 pb-6 border-b border-white/10 gap-6">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-[#00F0FF] text-xs font-bold uppercase tracking-wider mb-3">
@@ -260,11 +261,10 @@ const PublicHomePage = () => {
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
-                    activeCategory === cat
+                  className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${activeCategory === cat
                       ? 'bg-[#00F0FF] text-black shadow-lg shadow-cyan-500/20'
                       : 'bg-white/5 text-gray-400 border border-white/10 hover:border-white/25 hover:text-white'
-                  }`}
+                    }`}
                 >
                   {cat}
                 </button>
@@ -286,13 +286,12 @@ const PublicHomePage = () => {
                   <div
                     key={club.id}
                     onClick={() => navigate(`/clubs/${club.id}`)}
-                    className={`group relative rounded-3xl overflow-hidden bg-[#12141C] border border-white/10 hover:border-cyan-500/40 transition-all duration-500 flex flex-col justify-between hover:shadow-2xl hover:shadow-cyan-500/10 cursor-pointer ${
-                      isWide ? 'lg:col-span-2 lg:flex-row' : ''
-                    }`}
+                    className={`group relative rounded-3xl overflow-hidden bg-[#12141C] border border-white/10 hover:border-cyan-500/40 transition-all duration-500 flex flex-col justify-between hover:shadow-2xl hover:shadow-cyan-500/10 cursor-pointer ${isWide ? 'lg:col-span-2 lg:flex-row' : ''
+                      }`}
                   >
                     <div className={`relative overflow-hidden bg-gray-900 ${isWide ? 'lg:w-1/2 min-h-[280px]' : 'h-56'} w-full`}>
                       <img
-                        src={club.coverImage || club.logoUrl || "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=800&auto=format&fit=crop"}
+                        src={getClubCoverImage(club)}
                         alt={club.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                       />
@@ -338,7 +337,7 @@ const PublicHomePage = () => {
       {/* 4. UPCOMING EVENTS SECTION */}
       <section id="upcoming-events" className="py-24 bg-[#0F1117] relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          
+
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 pb-6 border-b border-white/10 gap-4">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 text-pink-400 text-xs font-bold uppercase tracking-wider mb-3">
@@ -432,7 +431,7 @@ const PublicHomePage = () => {
       {/* 5. EVENT CATEGORIES SECTION */}
       <section className="py-24 bg-[#0B0C10] relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          
+
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 pb-6 border-b border-white/10 gap-4">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-[#00F0FF] text-xs font-bold uppercase tracking-wider mb-3">
@@ -487,7 +486,7 @@ const PublicHomePage = () => {
       {/* 6. WHY JOIN SECTION */}
       <section className="py-24 bg-[#0F1117] relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          
+
           <div className="max-w-3xl mb-16">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 text-[#00F0FF] text-xs font-bold uppercase tracking-wider mb-4">
               <Sparkles className="w-3.5 h-3.5" />

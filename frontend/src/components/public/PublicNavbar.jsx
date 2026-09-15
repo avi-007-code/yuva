@@ -18,43 +18,59 @@ const PublicNavbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
           ? 'bg-[#0B0C10]/90 backdrop-blur-md border-b border-white/10 py-3 shadow-2xl shadow-black/60'
           : 'bg-[#0B0C10]/80 backdrop-blur-sm py-5 border-b border-white/5'
-      }`}
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
-          
+
           {/* Logo */}
           <Link
             to="/"
             className="group flex items-center gap-2.5 text-white font-extrabold tracking-tight text-xl sm:text-2xl"
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#00F0FF] to-[#3B82F6] flex items-center justify-center text-black font-black shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
-              <Sparkles className="w-5 h-5 text-black fill-black" />
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#00F0FF] to-[#3B82F6] flex items-center justify-center text-black font-black shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform shrink-0">
+              <span className="font-['Syne',sans-serif] text-2xl font-black leading-none">4</span>
             </div>
-            <span className="font-['Syne',sans-serif] tracking-wider text-white">
-              CLUB<span className="text-[#00F0FF]">HUB</span>
-            </span>
+            <div className="flex flex-col justify-center leading-none">
+              <span className="text-[10px] font-black tracking-[0.25em] text-[#00F0FF] uppercase leading-none mb-0.5">
+                THE
+              </span>
+              <span className="font-['Syne',sans-serif] text-xl font-black tracking-tight text-white leading-none">
+                PEOPLE<span className="text-[#00F0FF]">.</span>
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-wider text-gray-300">
             <Link
               to="/"
-              className={`transition-colors hover:text-[#00F0FF] ${
-                location.pathname === '/' ? 'text-[#00F0FF]' : 'text-gray-300'
-              }`}
+              className={`transition-colors hover:text-[#00F0FF] ${location.pathname === '/' ? 'text-[#00F0FF]' : 'text-gray-300'
+                }`}
             >
               Home
             </Link>
+
+            <a
+              href="/#upcoming-events"
+              onClick={(e) => {
+                if (location.pathname === '/') {
+                  e.preventDefault();
+                  document.getElementById('upcoming-events')?.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="transition-colors hover:text-[#00F0FF] text-gray-300"
+            >
+              Events
+            </a>
+
             <Link
               to="/clubs"
-              className={`transition-colors hover:text-[#00F0FF] ${
-                location.pathname.startsWith('/clubs') ? 'text-[#00F0FF]' : 'text-gray-300'
-              }`}
+              className={`transition-colors hover:text-[#00F0FF] ${location.pathname.startsWith('/clubs') ? 'text-[#00F0FF]' : 'text-gray-300'
+                }`}
             >
               Clubs Directory
             </Link>
@@ -111,6 +127,19 @@ const PublicNavbar = () => {
               >
                 Home
               </Link>
+              <a
+                href="/#upcoming-events"
+                onClick={(e) => {
+                  setMobileMenuOpen(false);
+                  if (location.pathname === '/') {
+                    e.preventDefault();
+                    document.getElementById('upcoming-events')?.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+                className="block py-2 px-3 rounded-lg text-gray-200 font-semibold hover:bg-white/5 hover:text-[#00F0FF] transition-colors"
+              >
+                Events
+              </a>
               <Link
                 to="/clubs"
                 onClick={() => setMobileMenuOpen(false)}

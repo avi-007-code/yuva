@@ -41,9 +41,8 @@ const AdminSidebar = ({ mobileOpen, setMobileOpen, onOpenInviteManager }) => {
 
       {/* Sidebar Panel */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-[#1C1B1F] text-[#F5F3EF] flex flex-col justify-between transition-transform duration-300 ease-in-out transform border-r border-[#2D2C30] ${
-          mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        }`}
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-[#1C1B1F] text-[#F5F3EF] flex flex-col justify-between transition-transform duration-300 ease-in-out transform border-r border-[#2D2C30] ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+          }`}
       >
         <div>
           {/* Header Branding */}
@@ -76,10 +75,9 @@ const AdminSidebar = ({ mobileOpen, setMobileOpen, onOpenInviteManager }) => {
                     end={item.end}
                     onClick={() => setMobileOpen(false)}
                     className={({ isActive }) =>
-                      `block px-3.5 py-2 text-sm transition-colors border-l-2 ${
-                        isActive
-                          ? 'border-[#B08D57] text-[#F5F3EF] font-semibold'
-                          : 'border-transparent text-[#C5C2BC] hover:text-[#F5F3EF]'
+                      `block px-3.5 py-2 text-sm transition-colors border-l-2 ${isActive
+                        ? 'border-[#B08D57] text-[#F5F3EF] font-semibold'
+                        : 'border-transparent text-[#C5C2BC] hover:text-[#F5F3EF]'
                       }`
                     }
                   >

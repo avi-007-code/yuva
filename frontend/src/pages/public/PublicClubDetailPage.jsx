@@ -5,6 +5,7 @@ import PublicLayout from '../../components/public/PublicLayout';
 import EventModal from '../../components/public/EventModal';
 import GalleryLightbox from '../../components/public/GalleryLightbox';
 import { getCloudinaryUrl, CLOUDINARY_TRANSFORMS } from '../../utils/cloudinary';
+import { getClubCoverImage } from '../../utils/clubCovers';
 import {
   ArrowLeft,
   Building2,
@@ -107,9 +108,9 @@ const PublicClubDetailPage = () => {
 
   useEffect(() => {
     if (club?.name) {
-      document.title = `${club.name} | ClubHub`;
+      document.title = `${club.name} | 4 THE PEOPLE`;
     } else {
-      document.title = 'Club Details | ClubHub';
+      document.title = 'Club Details | 4 THE PEOPLE';
     }
   }, [club]);
 
@@ -124,7 +125,7 @@ const PublicClubDetailPage = () => {
   return (
     <PublicLayout>
       <div className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        
+
         {/* Back Link */}
         <button
           onClick={() => navigate('/clubs')}
@@ -153,7 +154,7 @@ const PublicClubDetailPage = () => {
           <div className="rounded-3xl bg-[#12141C] border border-white/10 overflow-hidden shadow-2xl">
             <div className="relative h-56 sm:h-72 bg-gray-900 overflow-hidden">
               <img
-                src={club.coverImage || club.logoUrl || "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1200&auto=format&fit=crop"}
+                src={getClubCoverImage(club)}
                 alt={club.name}
                 className="w-full h-full object-cover"
               />

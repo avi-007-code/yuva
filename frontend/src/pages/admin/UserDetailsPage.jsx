@@ -42,9 +42,9 @@ const UserDetailsPage = () => {
       const data = res.data || null;
       setUser(data);
       if (data?.name) {
-        document.title = `${data.name} | ClubHub Admin`;
+        document.title = `${data.name} | 4 THE PEOPLE`;
       } else {
-        document.title = 'User Details | ClubHub Admin';
+        document.title = 'User Details | 4 THE PEOPLE';
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load user details.');

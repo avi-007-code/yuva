@@ -59,9 +59,9 @@ const ClubDetailsPage = () => {
       setClub(clubData);
       setManagers(managersRes.data?.managers || []);
       if (clubData?.name) {
-        document.title = `${clubData.name} | ClubHub Admin`;
+        document.title = `${clubData.name} | 4 THE PEOPLE`;
       } else {
-        document.title = 'Club Details | ClubHub Admin';
+        document.title = 'Club Details | 4 THE PEOPLE';
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to load club details.');

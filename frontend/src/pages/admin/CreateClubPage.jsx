@@ -12,7 +12,7 @@ const CreateClubPage = () => {
   const [error, setError] = useState('');
 
   React.useEffect(() => {
-    document.title = 'Create Club | ClubHub Admin';
+    document.title = 'Create Club | 4 THE PEOPLE';
   }, []);
 
   const handleSubmit = async (e) => {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import ErrorBoundary from './components/common/ErrorBoundary';
 
 // Public Unauthenticated Pages
@@ -11,8 +12,9 @@ import PublicEventDetailPage from './pages/public/PublicEventDetailPage';
 import PublicDashboardDemo from './pages/public-demo/PublicDashboardDemo';
 import YuuvaShowcase from './pages/yuva/YuuvaShowcase';
 
-// Dedicated Login Pages
+// Dedicated Login & Auth Pages
 import Login from './pages/Login';
+import AcceptInvitePage from './pages/AcceptInvitePage';
 
 // Protected Route & Layouts
 import ProtectedRoute from './components/ProtectedRoute';
@@ -38,8 +40,9 @@ import ManagerProfilePage from './pages/manager/ManagerProfilePage';
 function App() {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <Router>
+      <ThemeProvider>
+        <AuthProvider>
+          <Router>
           <Routes>
             {/* Public Unauthenticated Routes */}
             <Route path="/" element={<PublicHomePage />} />
@@ -51,7 +54,8 @@ function App() {
             <Route path="/clubs/:clubId" element={<PublicClubDetailPage />} />
             <Route path="/clubs/:clubId/events/:eventId" element={<PublicEventDetailPage />} />
 
-            {/* Dedicated Login Routes */}
+            {/* Dedicated Login & Auth Routes */}
+            <Route path="/accept-invite/:token" element={<AcceptInvitePage />} />
             <Route path="/login/admin" element={<Login role="admin" />} />
             <Route path="/login/manager" element={<Login role="manager" />} />
             <Route path="/login" element={<Navigate to="/login/manager" replace />} />
@@ -94,7 +98,8 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Router>
-      </AuthProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

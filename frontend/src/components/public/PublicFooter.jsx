@@ -6,22 +6,27 @@ const PublicFooter = () => {
   return (
     <footer className="mt-auto bg-[#08090C] text-gray-400 py-16 border-t border-white/10 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-white/10">
-          
+
           {/* Brand Info */}
           <div className="md:col-span-6 space-y-4">
-            <div className="flex items-center gap-2 text-white font-extrabold tracking-tight text-2xl">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#00F0FF] to-[#3B82F6] flex items-center justify-center text-black font-black">
-                <Sparkles className="w-4 h-4 text-black fill-black" />
+            <div className="flex items-center gap-2.5 text-white font-extrabold tracking-tight">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#00F0FF] to-[#3B82F6] flex items-center justify-center text-black font-black shadow-lg shadow-cyan-500/20 shrink-0">
+                <span className="font-['Syne',sans-serif] text-2xl font-black leading-none">4</span>
               </div>
-              <span className="font-['Syne',sans-serif] tracking-wider">
-                CLUB<span className="text-[#00F0FF]">HUB</span>
-              </span>
+              <div className="flex flex-col justify-center leading-none font-['Syne',sans-serif]">
+                <span className="text-[10px] font-black tracking-[0.25em] text-[#00F0FF] uppercase leading-none mb-0.5">
+                  THE
+                </span>
+                <span className="text-xl font-black tracking-tight text-white leading-none">
+                  PEOPLE<span className="text-[#00F0FF]">.</span>
+                </span>
+              </div>
             </div>
 
             <p className="text-gray-400 text-sm max-w-sm leading-relaxed">
-              Discover clubs. Discover events. Discover your campus community. Built for students, by students.
+              Discover campus clubs, manage vibrant events, and empower student leadership with 4 THE PEOPLE.
             </p>
           </div>
 
@@ -47,17 +52,12 @@ const PublicFooter = () => {
           {/* Portals Link */}
           <div className="md:col-span-3 space-y-3">
             <h4 className="font-['Syne',sans-serif] text-white text-xs font-extrabold uppercase tracking-widest">
-              Staff Portals
+              Manager Access
             </h4>
             <ul className="space-y-2 text-xs font-semibold">
               <li>
                 <Link to="/login/manager" className="hover:text-[#00F0FF] transition-colors">
                   Manager Portal Login
-                </Link>
-              </li>
-              <li>
-                <Link to="/login/admin" className="hover:text-[#00F0FF] transition-colors">
-                  Admin Portal Login
                 </Link>
               </li>
             </ul>
@@ -67,7 +67,7 @@ const PublicFooter = () => {
 
         {/* Copyright Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
-          <p>© {new Date().getFullYear()} ClubHub. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} 4 THE PEOPLE. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <span className="hover:text-gray-400 cursor-pointer">Privacy Policy</span>
             <span className="hover:text-gray-400 cursor-pointer">Terms of Service</span>

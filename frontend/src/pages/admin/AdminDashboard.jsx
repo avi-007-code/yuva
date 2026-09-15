@@ -20,7 +20,7 @@ const AdminDashboard = () => {
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
 
   useEffect(() => {
-    document.title = 'Admin Dashboard | ClubHub';
+    document.title = 'Admin Dashboard | 4 THE PEOPLE';
     fetchDashboardData();
   }, []);
 

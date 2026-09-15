@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { managerApi } from '../../api/managerApi';
+import { useTheme } from '../../context/ThemeContext';
 import EmptyState from '../../components/common/EmptyState';
 import { ClubCardSkeleton } from '../../components/common/CardSkeleton';
-import { Building2, Sparkles, ArrowRight, AlertCircle, RefreshCw } from 'lucide-react';
+import { Building2, Sparkles, AlertCircle, RefreshCw, Search, ChevronRight } from 'lucide-react';
 
 const MyClubsPage = () => {
+  const { isDark } = useTheme();
   const [clubs, setClubs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
   const fetchMyClubs = async () => {
@@ -16,7 +19,6 @@ const MyClubsPage = () => {
       setLoading(true);
       setError('');
       const res = await managerApi.getMyClubs();
-      // Handle data envelope or top-level clubs array
       const clubList =
         res.data?.clubs ||
         res.clubs ||
@@ -24,7 +26,6 @@ const MyClubsPage = () => {
       setClubs(clubList);
     } catch (err) {
       if (err.response?.status === 403) {
-        // Backend throws 403 when user has zero MANAGER memberships
         setClubs([]);
       } else {
         setError(err.response?.data?.message || 'Failed to load your assigned clubs.');
@@ -35,36 +36,63 @@ const MyClubsPage = () => {
   };
 
   useEffect(() => {
-    document.title = 'My Clubs | ClubHub Manager';
+    document.title = 'My Managed Clubs | 4 THE PEOPLE';
     fetchMyClubs();
   }, []);
+
+  const filteredClubs = clubs.filter((c) =>
+    c.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="space-y-8">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-semibold uppercase tracking-wider mb-2">
+      <div className={`rounded-3xl p-6 sm:p-8 border shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 transition-colors ${isDark
+          ? 'bg-[#151D2A] border-slate-800 shadow-xl'
+          : 'bg-white border-[#E2E0D5]'
+        }`}>
+        <div className="space-y-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FF5733]/10 text-[#FF5733] text-[10px] font-black uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Club Manager Portal</span>
+            <span>Club Portfolio</span>
           </div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">My Managed Clubs</h1>
-          <p className="text-slate-400 text-sm mt-1">
-            Select a club to edit details, upload logo, manage events, and upload photo galleries.
+          <h1 className={`font-['Syne',sans-serif] text-3xl sm:text-4xl font-black uppercase tracking-tight ${isDark ? 'text-white' : 'text-[#0F172A]'
+            }`}>
+            My Managed <span className="text-[#FF5733]">Clubs</span>
+          </h1>
+          <p className={`text-xs font-medium max-w-xl ${isDark ? 'text-slate-400' : 'text-[#64748B]'}`}>
+            Select a club to edit details, upload logos & cover photos, manage campus events, and organize photo galleries.
           </p>
+        </div>
+
+        {/* Search Bar */}
+        <div className="relative w-full md:w-64">
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#94A3B8]" />
+          <input
+            type="text"
+            placeholder="Filter clubs..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className={`w-full pl-10 pr-4 py-2.5 rounded-full border text-xs font-medium focus:outline-none focus:border-[#FF5733] ${isDark
+                ? 'bg-[#0B0F17] border-slate-700 text-slate-100 placeholder-slate-500'
+                : 'bg-[#FAF9F5] border-[#E2E0D5] text-[#0F172A] placeholder-[#94A3B8]'
+              }`}
+          />
         </div>
       </div>
 
       {/* Error Alert */}
       {error && (
-        <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl flex items-center justify-between text-rose-300 text-sm">
+        <div className={`p-4 rounded-2xl border flex items-center justify-between text-xs font-bold ${isDark ? 'bg-rose-950/40 border-rose-800 text-rose-300' : 'bg-rose-50 border-rose-200 text-rose-700'
+          }`}>
           <div className="flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 shrink-0 text-rose-400" />
+            <AlertCircle className="w-5 h-5 shrink-0 text-rose-500" />
             <span>{error}</span>
           </div>
           <button
             onClick={fetchMyClubs}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 text-xs font-bold uppercase rounded-xl transition"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 text-[11px] font-black uppercase rounded-xl transition"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Retry</span>
@@ -90,9 +118,9 @@ const MyClubsPage = () => {
       )}
 
       {/* Clubs Grid */}
-      {!loading && !error && clubs.length > 0 && (
+      {!loading && !error && filteredClubs.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {clubs.map((club) => {
+          {filteredClubs.map((club) => {
             const logoUrl = club.logo?.url;
             const initials = club.name ? club.name.slice(0, 2).toUpperCase() : 'CL';
 
@@ -100,7 +128,10 @@ const MyClubsPage = () => {
               <div
                 key={club.id}
                 onClick={() => navigate(`/manager/clubs/${club.id}`)}
-                className="group bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-purple-500/50 rounded-3xl p-6 shadow-lg hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-300 flex flex-col justify-between cursor-pointer"
+                className={`group border rounded-3xl p-6 shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col justify-between cursor-pointer ${isDark
+                    ? 'bg-[#151D2A] hover:bg-[#1A2436] border-slate-800 hover:border-[#FF5733]/60'
+                    : 'bg-white hover:bg-[#FAF9F5] border-[#E2E0D5] hover:border-[#FF5733]'
+                  }`}
               >
                 <div className="space-y-4">
                   {/* Header Logo */}
@@ -109,36 +140,43 @@ const MyClubsPage = () => {
                       <img
                         src={logoUrl}
                         alt={club.name}
-                        className="w-14 h-14 rounded-2xl object-cover border border-slate-700/60 shadow-md group-hover:scale-105 transition-transform"
+                        className={`w-14 h-14 rounded-2xl object-cover border shadow-xs group-hover:scale-105 transition-transform ${isDark ? 'border-slate-700' : 'border-[#E2E0D5]'
+                          }`}
                       />
                     ) : (
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-500 to-indigo-600 flex items-center justify-center text-white font-black text-lg shadow-md shadow-purple-500/20 group-hover:scale-105 transition-transform">
+                      <div className="w-14 h-14 rounded-2xl bg-[#FF5733] flex items-center justify-center text-white font-['Syne',sans-serif] font-black text-xl shadow-md shadow-[#FF5733]/25 group-hover:scale-105 transition-transform">
                         {initials}
                       </div>
                     )}
 
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-xl font-bold text-white group-hover:text-purple-300 transition truncate">
+                      <h3 className={`font-['Syne',sans-serif] text-xl font-black group-hover:text-[#FF5733] transition truncate ${isDark ? 'text-white' : 'text-[#0F172A]'
+                        }`}>
                         {club.name}
                       </h3>
-                      <span className="text-xs text-purple-400 font-semibold bg-purple-500/10 px-2.5 py-0.5 rounded-full border border-purple-500/20">
+                      <span className="text-[10px] text-[#3B82F6] font-black uppercase tracking-wider bg-[#3B82F6]/10 px-2.5 py-0.5 rounded-full inline-block mt-0.5 border border-[#3B82F6]/20">
                         Manager Access
                       </span>
                     </div>
                   </div>
 
                   {/* Description */}
-                  <p className="text-sm text-slate-400 line-clamp-3 leading-relaxed">
+                  <p className={`text-xs line-clamp-3 leading-relaxed font-medium ${isDark ? 'text-slate-400' : 'text-[#64748B]'
+                    }`}>
                     {club.description || 'No description provided for this club.'}
                   </p>
                 </div>
 
                 {/* Footer Link */}
-                <div className="pt-6 mt-6 border-t border-slate-800/80 flex items-center justify-between text-xs">
-                  <span className="text-slate-500 font-medium">Click to manage</span>
-                  <div className="flex items-center gap-1 font-bold text-purple-400 group-hover:text-purple-300 transition">
+                <div className={`pt-4 mt-6 border-t flex items-center justify-between text-xs ${isDark ? 'border-slate-800' : 'border-[#E8E6DF]'
+                  }`}>
+                  <span className={`text-[11px] font-bold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-[#64748B]'
+                    }`}>
+                    {club.members ? `${club.members.length} Members` : 'Manage Details'}
+                  </span>
+                  <div className="flex items-center gap-1 font-extrabold text-[#FF5733] group-hover:translate-x-1 transition-transform uppercase text-[11px] tracking-wider">
                     <span>Manage Club</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                    <ChevronRight className="w-3.5 h-3.5" />
                   </div>
                 </div>
               </div>

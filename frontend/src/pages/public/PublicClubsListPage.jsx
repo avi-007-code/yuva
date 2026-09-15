@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { publicApi } from '../../api/publicApi';
 import PublicLayout from '../../components/public/PublicLayout';
 import { Compass, Search, Building2, AlertCircle, RefreshCw, ArrowUpRight, Sparkles, Users } from 'lucide-react';
+import { getClubCoverImage } from '../../utils/clubCovers';
 
 const PublicClubsListPage = () => {
   const [clubs, setClubs] = useState([]);
@@ -31,7 +32,7 @@ const PublicClubsListPage = () => {
   };
 
   useEffect(() => {
-    document.title = 'Explore Campus Clubs | ClubHub';
+    document.title = 'Explore Campus Clubs | 4 THE PEOPLE';
     fetchClubs();
   }, []);
 
@@ -54,7 +55,7 @@ const PublicClubsListPage = () => {
   return (
     <PublicLayout>
       <div className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        
+
         {/* Header & Search */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/10 pb-8">
           <div>
@@ -89,11 +90,10 @@ const PublicClubsListPage = () => {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${
-                selectedCategory === cat
+              className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap cursor-pointer ${selectedCategory === cat
                   ? 'bg-[#00F0FF] text-black shadow-lg shadow-cyan-500/20'
                   : 'bg-white/5 text-gray-400 border border-white/10 hover:border-white/25 hover:text-white'
-              }`}
+                }`}
             >
               {cat}
             </button>
@@ -158,7 +158,7 @@ const PublicClubsListPage = () => {
               >
                 <div className="relative h-52 w-full overflow-hidden bg-gray-900">
                   <img
-                    src={club.coverImage || club.logoUrl || "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=800&auto=format&fit=crop"}
+                    src={getClubCoverImage(club)}
                     alt={club.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />

@@ -89,9 +89,9 @@ const PublicEventDetailPage = () => {
 
   useEffect(() => {
     if (event?.title) {
-      document.title = `${event.title} | ClubHub`;
+      document.title = `${event.title} | 4 THE PEOPLE`;
     } else {
-      document.title = 'Event Details | ClubHub';
+      document.title = 'Event Details | 4 THE PEOPLE';
     }
   }, [event]);
 
@@ -110,7 +110,7 @@ const PublicEventDetailPage = () => {
   return (
     <PublicLayout>
       <div className="py-12 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-        
+
         {/* Back Link */}
         <button
           onClick={() => navigate(-1)}
@@ -202,11 +202,10 @@ const PublicEventDetailPage = () => {
                   <button
                     onClick={handleRegister}
                     disabled={registered}
-                    className={`w-full sm:w-auto px-9 py-4 rounded-full font-extrabold text-xs uppercase tracking-wider shadow-lg transition-all cursor-pointer ${
-                      registered
+                    className={`w-full sm:w-auto px-9 py-4 rounded-full font-extrabold text-xs uppercase tracking-wider shadow-lg transition-all cursor-pointer ${registered
                         ? 'bg-emerald-500 text-black cursor-default'
                         : 'bg-[#00F0FF] hover:bg-[#38f2ff] text-black shadow-cyan-500/30'
-                    }`}
+                      }`}
                   >
                     {registered ? '✓ Registered' : 'RSVP / Register Now →'}
                   </button>
@@ -216,7 +215,7 @@ const PublicEventDetailPage = () => {
 
             {/* Description & Venue Details */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              
+
               <div className="lg:col-span-8 bg-[#12141C] rounded-3xl p-8 border border-white/10 space-y-4">
                 <h2 className="font-['Syne',sans-serif] text-2xl font-extrabold text-white uppercase">
                   Event <span className="text-[#00F0FF]">Description</span>

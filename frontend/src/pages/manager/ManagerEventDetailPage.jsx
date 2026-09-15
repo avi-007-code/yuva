@@ -89,9 +89,9 @@ const ManagerEventDetailPage = () => {
       setEvent(evt);
       setTitle(evt.title || '');
       if (evt.title) {
-        document.title = `${evt.title} | ClubHub Manager`;
+        document.title = `${evt.title} | 4 THE PEOPLE`;
       } else {
-        document.title = 'Event Details | ClubHub Manager';
+        document.title = 'Event Details | 4 THE PEOPLE';
       }
       setDescription(evt.description || '');
       setLocation(evt.location || '');
@@ -293,9 +293,9 @@ const ManagerEventDetailPage = () => {
       {/* Back Button */}
       <button
         onClick={() => navigate(`/manager/clubs/${clubId}`)}
-        className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-white transition-colors"
+        className="inline-flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-[#0F172A] hover:text-[#FF5733] px-4 py-2 rounded-full bg-white border border-[#E2E0D5] hover:border-[#FF5733] transition-all shadow-xs cursor-pointer"
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="w-4 h-4 text-[#FF5733]" />
         <span>Back to Club Management</span>
       </button>
 
@@ -317,7 +317,7 @@ const ManagerEventDetailPage = () => {
         </div>
       ) : event ? (
         <div className="space-y-8">
-          
+
           {/* Header Banner & Status */}
           {/* Magazine Hero Banner for Event */}
           <EventHero event={event}>
@@ -343,14 +343,14 @@ const ManagerEventDetailPage = () => {
           </EventHero>
 
           {/* Section 1: Edit Event Details Form */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 lg:p-8 shadow-xl space-y-6">
-            <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-purple-400" />
+          <div className="bg-white border border-[#E2E0D5] rounded-3xl p-6 lg:p-8 shadow-sm space-y-6">
+            <h2 className="font-['Syne',sans-serif] text-xl font-black text-[#0F172A] uppercase tracking-tight flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-[#FF5733]" />
               <span>Edit Event Details</span>
             </h2>
 
             {formError && (
-              <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 text-xs flex items-center gap-2">
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-bold flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{formError}</span>
               </div>
@@ -358,47 +358,47 @@ const ManagerEventDetailPage = () => {
 
             <form onSubmit={handleSaveEvent} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-extrabold text-[#0F172A] uppercase tracking-wider mb-1">
                   Event Title *
                 </label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500"
+                  className="w-full px-4 py-2.5 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl text-[#0F172A] text-xs font-medium focus:outline-none focus:border-[#FF5733]"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-extrabold text-[#0F172A] uppercase tracking-wider mb-1">
                   Description *
                 </label>
                 <textarea
                   rows={4}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500 resize-none"
+                  className="w-full px-4 py-2.5 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl text-[#0F172A] text-xs font-medium focus:outline-none focus:border-[#FF5733] resize-none"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                <label className="block text-xs font-extrabold text-[#0F172A] uppercase tracking-wider mb-1">
                   Location *
                 </label>
                 <input
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500"
+                  className="w-full px-4 py-2.5 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl text-[#0F172A] text-xs font-medium focus:outline-none focus:border-[#FF5733]"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                  <ExternalLink className="w-3.5 h-3.5 text-purple-400" />
+                <label className="block text-xs font-extrabold text-[#0F172A] uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                  <ExternalLink className="w-3.5 h-3.5 text-[#2563EB]" />
                   <span>Registration / Redirect URL (Google Forms, etc.)</span>
                 </label>
                 <input
@@ -406,11 +406,11 @@ const ManagerEventDetailPage = () => {
                   value={registrationUrl}
                   onChange={(e) => setRegistrationUrl(e.target.value)}
                   placeholder="e.g. https://forms.google.com/your-form or https://eventbrite.com/..."
-                  className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500"
+                  className="w-full px-4 py-2.5 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl text-[#0F172A] text-xs font-medium focus:outline-none focus:border-[#FF5733]"
                 />
               </div>
 
-              <div className="space-y-4 pt-2 border-t border-slate-800/80">
+              <div className="space-y-4 pt-2 border-t border-[#E8E6DF]">
                 <DateTimePicker
                   label="Start Date & Time"
                   value={startAt}
@@ -430,7 +430,7 @@ const ManagerEventDetailPage = () => {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-sm rounded-xl shadow-md transition disabled:opacity-50"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#FF5733] hover:bg-[#E64A26] text-white font-extrabold text-xs uppercase tracking-wider rounded-full shadow-md transition disabled:opacity-50 cursor-pointer"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   <span>Save Changes</span>
@@ -440,14 +440,14 @@ const ManagerEventDetailPage = () => {
           </div>
 
           {/* Section 2: Cover Image Section */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 lg:p-8 shadow-xl space-y-6">
-            <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-              <ImageIcon className="w-5 h-5 text-purple-400" />
+          <div className="bg-white border border-[#E2E0D5] rounded-3xl p-6 lg:p-8 shadow-sm space-y-6">
+            <h2 className="font-['Syne',sans-serif] text-xl font-black text-[#0F172A] uppercase tracking-tight flex items-center gap-2">
+              <ImageIcon className="w-5 h-5 text-[#FF5733]" />
               <span>Event Cover Image</span>
             </h2>
 
             <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-              <div className="relative w-full md:w-80 h-44 rounded-2xl bg-slate-950 border border-slate-800 overflow-hidden shrink-0">
+              <div className="relative w-full md:w-80 h-44 rounded-2xl bg-[#FAF9F5] border border-[#E2E0D5] overflow-hidden shrink-0">
                 {event.coverImage?.url ? (
                   <img
                     src={event.coverImage.url}
@@ -455,22 +455,22 @@ const ManagerEventDetailPage = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center p-4 text-center text-slate-500">
+                  <div className="w-full h-full flex items-center justify-center p-4 text-center text-[#64748B]">
                     <div className="space-y-1">
-                      <Sparkles className="w-6 h-6 text-purple-400/60 mx-auto" />
-                      <p className="text-xs">No cover image uploaded</p>
+                      <Sparkles className="w-6 h-6 text-[#FF5733]/60 mx-auto" />
+                      <p className="text-xs font-semibold">No cover image uploaded</p>
                     </div>
                   </div>
                 )}
               </div>
 
               <div className="space-y-3">
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-[#64748B] font-medium leading-relaxed">
                   Upload a high-resolution cover image to showcase on the campus event feed.
                 </p>
 
                 <div className="flex items-center gap-3">
-                  <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold rounded-xl transition">
+                  <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-[#FF5733] hover:bg-[#E64A26] text-white text-xs font-extrabold uppercase tracking-wider rounded-full shadow-md transition">
                     {coverUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                     <span>{event.coverImage?.url ? 'Replace Cover Image' : 'Upload Cover Image'}</span>
                     <input
@@ -486,7 +486,7 @@ const ManagerEventDetailPage = () => {
                     <button
                       onClick={handleCoverDelete}
                       disabled={coverUploading || coverDeleting}
-                      className="inline-flex items-center gap-1.5 px-3 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-semibold rounded-xl transition"
+                      className="inline-flex items-center gap-1.5 px-3 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-extrabold uppercase tracking-wider rounded-full transition"
                     >
                       {coverDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                       <span>Remove</span>
@@ -498,18 +498,18 @@ const ManagerEventDetailPage = () => {
           </div>
 
           {/* Section 3: Event Photo Gallery */}
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 lg:p-8 shadow-xl space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
+          <div className="bg-white border border-[#E2E0D5] rounded-3xl p-6 lg:p-8 shadow-sm space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E8E6DF] pb-4">
               <div>
-                <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-                  <ImageIcon className="w-5 h-5 text-purple-400" />
+                <h2 className="font-['Syne',sans-serif] text-xl font-black text-[#0F172A] uppercase tracking-tight flex items-center gap-2">
+                  <ImageIcon className="w-5 h-5 text-[#2563EB]" />
                   <span>Photo Gallery</span>
                 </h2>
-                <p className="text-xs text-slate-400">Upload photos captured during or after the event</p>
+                <p className="text-xs text-[#64748B] font-medium">Upload photos captured during or after the event</p>
               </div>
 
               {/* Multi-image Upload Button */}
-              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-xs font-semibold rounded-xl shadow-md transition">
+              <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-extrabold uppercase tracking-wider rounded-full shadow-md transition">
                 {galleryUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                 <span>Add Photos (Up to 10)</span>
                 <input
@@ -535,7 +535,7 @@ const ManagerEventDetailPage = () => {
                 {gallery.map((img, idx) => (
                   <div key={img.publicId || idx} className="relative group rounded-2xl overflow-hidden border border-slate-800 aspect-square bg-slate-950">
                     <img src={img.url} alt={`Gallery ${idx + 1}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                    
+
                     {/* Delete Photo Overlay Button */}
                     <button
                       onClick={() => handleGalleryImageDelete(img.publicId)}
