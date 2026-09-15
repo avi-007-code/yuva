@@ -25,5 +25,7 @@ dist-ssr
 
 .env 
 
-yuva/
-public-demo/
+/src/components/public-demo/
+/src/pages/public-demo/
+/src/components/yuva/
+/src/pages/yuva/
