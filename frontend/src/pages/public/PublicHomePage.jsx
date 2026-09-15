@@ -5,7 +5,6 @@ import { publicApi } from '../../api/publicApi';
 import PublicLayout from '../../components/public/PublicLayout';
 import EventModal from '../../components/public/EventModal';
 import GalleryLightbox from '../../components/public/GalleryLightbox';
-import MarqueeTicker from '../../components/public-demo/MarqueeTicker';
 import { getClubCoverImage } from '../../utils/clubCovers';
 import {
   ArrowRight,
@@ -234,9 +233,6 @@ const PublicHomePage = () => {
           </div>
         </div>
       </section>
-
-      {/* 2. CONTINUOUS MARQUEE TICKER */}
-      <MarqueeTicker />
 
       {/* 3. FEATURED CLUBS SECTION */}
       <section id="featured-clubs" className="py-24 bg-[#0B0C10] relative overflow-hidden">
