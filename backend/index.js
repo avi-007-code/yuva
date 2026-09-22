@@ -25,6 +25,8 @@ const clubRouter = require("./routes/clubRoutes");
 const managerRouter = require("./routes/managerRoutes");
 const publicRouter = require("./routes/publicRoutes");
 
+app.set('trust proxy', 1);
+
 // Standard Express Middlewares
 app.use(cookieParser());
 app.use(express.json());
