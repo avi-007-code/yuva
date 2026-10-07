@@ -32,15 +32,41 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(responseFormatter);
 
-const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:5173")
+const configuredOrigins =
+  process.env.CORS_ALLOWED_ORIGINS ||
+  process.env.FRONTEND_URL ||
+  "http://localhost:5173";
+
+const allowedOrigins = configuredOrigins
   .split(",")
-  .map(s => s.trim());
+  .map(origin => origin.trim())
+  .filter(Boolean)
+  .map(origin => {
+    let parsedOrigin;
+
+    try {
+      parsedOrigin = new URL(origin);
+    } catch {
+      throw new Error(`Invalid URL in CORS_ALLOWED_ORIGINS: ${origin}`);
+    }
+
+    if (parsedOrigin.protocol !== "http:" && parsedOrigin.protocol !== "https:") {
+      throw new Error(`CORS origin must use HTTP or HTTPS: ${origin}`);
+    }
+
+    return parsedOrigin.origin;
+  });
 
 app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin || allowedOrigins.includes(origin)) callback(null, true);
-      else callback(new Error("Not allowed by CORS"));
+      else {
+        const error = new Error("Origin is not allowed by CORS.");
+        error.statusCode = 403;
+        error.isOperational = true;
+        callback(error);
+      }
     },
     credentials: true,
   })

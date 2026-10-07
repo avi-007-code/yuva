@@ -9,59 +9,52 @@ dotenv.config();
  * Required environment variables:
  * BREVO_API_KEY
  * BREVO_SENDER_EMAIL
- * BREVO_SENDER_NAME
+ * BREVO_SENDER_NAME (optional)
  */
 
-const brevo = new BrevoClient({
-  apiKey: process.env.BREVO_API_KEY,
-  timeoutInSeconds: 30,
-  maxRetries: 2,
-});
+let brevo;
 
-const senderEmail =
-  process.env.BREVO_SENDER_EMAIL ||
-  process.env.EMAIL_USER ||
-  process.env.APP_MAIL;
-
-const senderName =
-  process.env.BREVO_SENDER_NAME ||
-  '4 THE PEOPLE';
-
-/**
- * Validate Brevo configuration
- */
-const validateBrevoConfig = () => {
+const getBrevoClient = () => {
   if (!process.env.BREVO_API_KEY) {
     throw new Error('BREVO_API_KEY is not configured.');
   }
 
-  if (!senderEmail) {
-    throw new Error(
-      'BREVO_SENDER_EMAIL is not configured.'
-    );
+  if (!brevo) {
+    brevo = new BrevoClient({
+      apiKey: process.env.BREVO_API_KEY,
+      timeoutInSeconds: 30,
+      maxRetries: 2,
+    });
   }
+
+  return brevo;
 };
 
 /**
  * Generic Brevo email sender
  */
 const sendEmail = async ({ toEmail, toName, subject, html }) => {
-  validateBrevoConfig();
+  const senderEmail = process.env.BREVO_SENDER_EMAIL;
+  const senderName =
+    process.env.BREVO_SENDER_NAME || '4 THE PEOPLE';
 
   try {
-    const response = await brevo.transactionalEmails.sendTransacEmail({
+    if (!senderEmail) {
+      throw new Error('BREVO_SENDER_EMAIL is not configured.');
+    }
+
+    const client = getBrevoClient();
+    const response = await client.transactionalEmails.sendTransacEmail({
       sender: {
         name: senderName,
         email: senderEmail,
       },
-
       to: [
         {
           email: toEmail,
           name: toName,
         },
       ],
-
       subject,
       htmlContent: html,
     });
@@ -69,7 +62,6 @@ const sendEmail = async ({ toEmail, toName, subject, html }) => {
     console.log(
       `Email sent successfully to ${toEmail}. Message ID: ${response.messageId}`
     );
-
     return response;
   } catch (error) {
     console.error('Brevo email sending failed.');
