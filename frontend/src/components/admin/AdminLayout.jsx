@@ -3,13 +3,17 @@ import { Outlet } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 import InviteManagerModal from './InviteManagerModal';
+import { useTheme } from '../../context/ThemeContext';
 
 const AdminLayout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
+  const { isDark } = useTheme();
 
   return (
-    <div className="min-h-screen bg-[#FAF9F7] text-[#1C1B1F] flex font-sans antialiased">
+    <div className={`min-h-screen flex font-sans antialiased transition-colors duration-300 ${
+      isDark ? 'bg-[#0B0F17] text-slate-100' : 'bg-[#FAF9F7] text-[#1C1B1F]'
+    }`}>
       {/* Sidebar */}
       <AdminSidebar
         mobileOpen={mobileOpen}
@@ -36,4 +40,5 @@ const AdminLayout = () => {
 };
 
 export default AdminLayout;
+
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import ScrollToTop from './components/ScrollToTop';
 import ErrorBoundary from './components/common/ErrorBoundary';
 
 // Public Unauthenticated Pages
@@ -41,57 +42,58 @@ function App() {
       <ThemeProvider>
         <AuthProvider>
           <Router>
-          <Routes>
-            {/* Public Unauthenticated Routes */}
-            <Route path="/" element={<PublicHomePage />} />
-            <Route path="/events/:eventId" element={<PublicEventDetailPage />} />
-            <Route path="/clubs" element={<PublicClubsListPage />} />
-            <Route path="/clubs/:clubId" element={<PublicClubDetailPage />} />
-            <Route path="/clubs/:clubId/events/:eventId" element={<PublicEventDetailPage />} />
+            <ScrollToTop />
+              <Routes>
+                {/* Public Unauthenticated Routes */}
+                <Route path="/" element={<PublicHomePage />} />
+                <Route path="/events/:eventId" element={<PublicEventDetailPage />} />
+                <Route path="/clubs" element={<PublicClubsListPage />} />
+                <Route path="/clubs/:clubId" element={<PublicClubDetailPage />} />
+                <Route path="/clubs/:clubId/events/:eventId" element={<PublicEventDetailPage />} />
 
-            {/* Dedicated Login & Auth Routes */}
-            <Route path="/accept-invite/:token" element={<AcceptInvitePage />} />
-            <Route path="/login/admin" element={<Login role="admin" />} />
-            <Route path="/login/manager" element={<Login role="manager" />} />
-            <Route path="/login" element={<Navigate to="/login/manager" replace />} />
+                {/* Dedicated Login & Auth Routes */}
+                <Route path="/accept-invite/:token" element={<AcceptInvitePage />} />
+                <Route path="/login/admin" element={<Login role="admin" />} />
+                <Route path="/login/manager" element={<Login role="manager" />} />
+                <Route path="/login" element={<Navigate to="/login/manager" replace />} />
 
-            {/* Protected Admin Portal Routes */}
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute allowedRole="admin">
-                  <AdminLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<AdminDashboard />} />
-              <Route path="profile" element={<AdminProfilePage />} />
-              <Route path="users" element={<UsersPage />} />
-              <Route path="users/:userId" element={<UserDetailsPage />} />
-              <Route path="clubs" element={<ClubsPage />} />
-              <Route path="clubs/create" element={<CreateClubPage />} />
-              <Route path="clubs/:clubId" element={<ClubDetailsPage />} />
-            </Route>
+                {/* Protected Admin Portal Routes */}
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute allowedRole="admin">
+                      <AdminLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="profile" element={<AdminProfilePage />} />
+                  <Route path="users" element={<UsersPage />} />
+                  <Route path="users/:userId" element={<UserDetailsPage />} />
+                  <Route path="clubs" element={<ClubsPage />} />
+                  <Route path="clubs/create" element={<CreateClubPage />} />
+                  <Route path="clubs/:clubId" element={<ClubDetailsPage />} />
+                </Route>
 
-            {/* Protected Manager Portal Routes */}
-            <Route
-              path="/manager"
-              element={
-                <ProtectedRoute allowedRole="manager">
-                  <ManagerLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<ManagerDashboard />} />
-              <Route path="profile" element={<ManagerProfilePage />} />
-              <Route path="clubs" element={<MyClubsPage />} />
-              <Route path="clubs/:clubId" element={<ManagerClubDetailPage />} />
-              <Route path="clubs/:clubId/events/:eventId" element={<ManagerEventDetailPage />} />
-            </Route>
+                {/* Protected Manager Portal Routes */}
+                <Route
+                  path="/manager"
+                  element={
+                    <ProtectedRoute allowedRole="manager">
+                      <ManagerLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route index element={<ManagerDashboard />} />
+                  <Route path="profile" element={<ManagerProfilePage />} />
+                  <Route path="clubs" element={<MyClubsPage />} />
+                  <Route path="clubs/:clubId" element={<ManagerClubDetailPage />} />
+                  <Route path="clubs/:clubId/events/:eventId" element={<ManagerEventDetailPage />} />
+                </Route>
 
-            {/* Catch-all redirect to public Home */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+                {/* Catch-all redirect to public Home */}
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
         </Router>
         </AuthProvider>
       </ThemeProvider>

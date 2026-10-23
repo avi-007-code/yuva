@@ -4,12 +4,28 @@ const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
-    // Default to 'dark' for Manager Workspace as requested
-    return localStorage.getItem('yuva_manager_theme') || 'dark';
+    // Default to 'light' for the whole application as requested
+    const saved = localStorage.getItem('yuva_theme');
+    if (saved === 'dark' || saved === 'light') {
+      return saved;
+    }
+    return 'light';
   });
 
   useEffect(() => {
+    localStorage.setItem('yuva_theme', theme);
     localStorage.setItem('yuva_manager_theme', theme);
+
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      root.classList.remove('light');
+      root.style.colorScheme = 'dark';
+    } else {
+      root.classList.remove('dark');
+      root.classList.add('light');
+      root.style.colorScheme = 'light';
+    }
   }, [theme]);
 
   const toggleTheme = () => {
@@ -28,9 +44,10 @@ export const ThemeProvider = ({ children }) => {
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
-    return { theme: 'dark', isDark: true, toggleTheme: () => {} };
+    return { theme: 'light', isDark: false, toggleTheme: () => {} };
   }
   return context;
 };
 
 export default ThemeContext;
+

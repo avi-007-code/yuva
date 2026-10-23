@@ -805,11 +805,12 @@ const ManagerClubDetailPage = () => {
         </div>
       ) : null}
 
-      {/* Modal: Create New Event */}
+      {/* Modal: Create New Event - 2 Column on Laptop / 1 Column on Mobile */}
       <Modal
         isOpen={isCreateEventModalOpen}
         onClose={() => !eventSubmitting && setIsCreateEventModalOpen(false)}
         title="Create New Event"
+        maxWidth="max-w-3xl"
       >
         <form onSubmit={handleCreateEvent} className="space-y-4">
           {eventError && (
@@ -819,91 +820,116 @@ const ManagerClubDetailPage = () => {
             </div>
           )}
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
-              Event Title *
-            </label>
-            <input
-              type="text"
-              value={eventTitle}
-              onChange={(e) => setEventTitle(e.target.value)}
-              placeholder="e.g. Annual Tech Symposium"
-              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500"
-              required
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Event Title - Full width on desktop */}
+            <div className="md:col-span-2">
+              <label className={`block text-xs font-semibold uppercase tracking-wider mb-1 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                Event Title *
+              </label>
+              <input
+                type="text"
+                value={eventTitle}
+                onChange={(e) => setEventTitle(e.target.value)}
+                placeholder="e.g. Annual Tech Symposium"
+                className={`w-full px-4 py-2.5 rounded-xl text-sm border focus:outline-none transition-colors ${
+                  isDark
+                    ? 'bg-slate-950 border-slate-800 text-white focus:border-purple-500'
+                    : 'bg-slate-50 border-slate-200 text-slate-900 focus:border-purple-600'
+                }`}
+                required
+              />
+            </div>
+
+            {/* Location */}
+            <div>
+              <label className={`block text-xs font-semibold uppercase tracking-wider mb-1 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                Location / Venue *
+              </label>
+              <input
+                type="text"
+                value={eventLocation}
+                onChange={(e) => setEventLocation(e.target.value)}
+                placeholder="e.g. Main Auditorium / Lab 3"
+                className={`w-full px-4 py-2.5 rounded-xl text-sm border focus:outline-none transition-colors ${
+                  isDark
+                    ? 'bg-slate-950 border-slate-800 text-white focus:border-purple-500'
+                    : 'bg-slate-50 border-slate-200 text-slate-900 focus:border-purple-600'
+                }`}
+                required
+              />
+            </div>
+
+            {/* Registration URL */}
+            <div>
+              <label className={`block text-xs font-semibold uppercase tracking-wider mb-1 flex items-center gap-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                <ExternalLink className="w-3.5 h-3.5 text-purple-400" />
+                <span>Registration URL (Optional)</span>
+              </label>
+              <input
+                type="url"
+                value={eventUrl}
+                onChange={(e) => setEventUrl(e.target.value)}
+                placeholder="e.g. https://forms.google.com/..."
+                className={`w-full px-4 py-2.5 rounded-xl text-sm border focus:outline-none transition-colors ${
+                  isDark
+                    ? 'bg-slate-950 border-slate-800 text-white focus:border-purple-500'
+                    : 'bg-slate-50 border-slate-200 text-slate-900 focus:border-purple-600'
+                }`}
+              />
+            </div>
+
+            {/* Description - Spanning full width */}
+            <div className="md:col-span-2">
+              <label className={`block text-xs font-semibold uppercase tracking-wider mb-1 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                Description *
+              </label>
+              <textarea
+                rows={3}
+                value={eventDesc}
+                onChange={(e) => setEventDesc(e.target.value)}
+                placeholder="Provide event details, schedule, agenda..."
+                className={`w-full px-4 py-2.5 rounded-xl text-sm border focus:outline-none transition-colors resize-none ${
+                  isDark
+                    ? 'bg-slate-950 border-slate-800 text-white focus:border-purple-500'
+                    : 'bg-slate-50 border-slate-200 text-slate-900 focus:border-purple-600'
+                }`}
+                required
+              />
+            </div>
+
+            {/* 2-Column Date & Time Pickers */}
+            <div className="md:col-span-2 pt-2 border-t border-slate-800/80 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <DateTimePicker
+                label="Start Date & Time"
+                value={eventStartAt}
+                onChange={setEventStartAt}
+                required
+              />
+
+              <DateTimePicker
+                label="End Date & Time (Optional)"
+                value={eventEndAt}
+                onChange={setEventEndAt}
+                min={eventStartAt}
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
-              Description *
-            </label>
-            <textarea
-              rows={3}
-              value={eventDesc}
-              onChange={(e) => setEventDesc(e.target.value)}
-              placeholder="Provide event details, schedule, agenda..."
-              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500 resize-none"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
-              Location *
-            </label>
-            <input
-              type="text"
-              value={eventLocation}
-              onChange={(e) => setEventLocation(e.target.value)}
-              placeholder="e.g. Main Auditorium / Lab 3"
-              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-              <ExternalLink className="w-3.5 h-3.5 text-purple-400" />
-              <span>Registration / External URL (Optional)</span>
-            </label>
-            <input
-              type="url"
-              value={eventUrl}
-              onChange={(e) => setEventUrl(e.target.value)}
-              placeholder="e.g. https://forms.google.com/your-form or https://eventbrite.com/..."
-              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500"
-            />
-          </div>
-
-          <div className="space-y-4 pt-2 border-t border-slate-800/80">
-            <DateTimePicker
-              label="Start Date & Time"
-              value={eventStartAt}
-              onChange={setEventStartAt}
-              required
-            />
-
-            <DateTimePicker
-              label="End Date & Time (Optional)"
-              value={eventEndAt}
-              onChange={setEventEndAt}
-              min={eventStartAt}
-            />
-          </div>
-
-          <div className="pt-4 flex items-center justify-end gap-3 border-t border-slate-800">
+          <div className={`pt-4 flex items-center justify-end gap-3 border-t ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
             <button
               type="button"
               disabled={eventSubmitting}
               onClick={() => setIsCreateEventModalOpen(false)}
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-xl transition"
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition border cursor-pointer ${
+                isDark ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700' : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+              }`}
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={eventSubmitting}
-              className="inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-sm font-semibold rounded-xl shadow-md transition disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-sm font-semibold rounded-xl shadow-md transition disabled:opacity-50 cursor-pointer"
             >
               {eventSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>Create Event</span>}
             </button>

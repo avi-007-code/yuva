@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { publicApi } from '../../api/publicApi';
 import PublicLayout from '../../components/public/PublicLayout';
 import GalleryLightbox from '../../components/public/GalleryLightbox';
+import { useTheme } from '../../context/ThemeContext';
 import {
   ArrowLeft,
   MapPin,
@@ -19,18 +20,34 @@ import {
 } from 'lucide-react';
 
 const formatDateParts = (dateString) => {
-  if (!dateString) return { day: '15', month: 'SEP', full: 'September 15, 2026' };
+  if (!dateString) return { day: 'TBA', month: 'TBA', full: 'Date TBA' };
   const dateObj = new Date(dateString);
-  if (isNaN(dateObj.getTime())) return { day: '15', month: 'SEP', full: dateString };
+  if (isNaN(dateObj.getTime())) return { day: 'TBA', month: 'TBA', full: 'Date TBA' };
   const day = dateObj.getDate().toString().padStart(2, '0');
   const month = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
   const full = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   return { day, month, full };
 };
 
+const formatEventTime = (startStr, endStr) => {
+  if (!startStr) return null;
+  const d = new Date(startStr);
+  if (isNaN(d.getTime())) return null;
+  let timeStr = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  if (endStr) {
+    const end = new Date(endStr);
+    if (!isNaN(end.getTime())) {
+      const endTime = end.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+      timeStr = `${timeStr} - ${endTime}`;
+    }
+  }
+  return timeStr;
+};
+
 const PublicEventDetailPage = () => {
   const { clubId, eventId } = useParams();
   const navigate = useNavigate();
+  const { isDark } = useTheme();
 
   const [event, setEvent] = useState(null);
   const [club, setClub] = useState(null);
@@ -100,7 +117,8 @@ const PublicEventDetailPage = () => {
     window.scrollTo(0, 0);
   }, [clubId, eventId]);
 
-  const dateInfo = formatDateParts(event?.date || event?.startDate || event?.startAt);
+  const dateInfo = formatDateParts(event?.startAt || event?.startDate || event?.date);
+  const eventTime = formatEventTime(event?.startAt || event?.startDate || event?.date, event?.endAt || event?.endDate);
 
   const handleRegister = () => {
     setRegistered(true);
@@ -114,7 +132,11 @@ const PublicEventDetailPage = () => {
         {/* Back Link */}
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-xs font-extrabold uppercase text-gray-300 hover:text-white hover:border-white/20 transition cursor-pointer"
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold uppercase transition cursor-pointer ${
+            isDark
+              ? 'bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:border-white/20'
+              : 'bg-white border border-slate-200 text-slate-700 hover:text-slate-900 shadow-2xs hover:border-slate-300'
+          }`}
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back</span>
@@ -124,7 +146,7 @@ const PublicEventDetailPage = () => {
         {error && (
           <div className="p-8 bg-red-500/10 border border-red-500/20 rounded-3xl text-center space-y-4">
             <AlertCircle className="w-10 h-10 text-red-400 mx-auto" />
-            <h2 className="text-xl font-extrabold text-white font-['Syne',sans-serif]">Event Not Available</h2>
+            <h2 className={`text-xl font-extrabold font-['Syne',sans-serif] ${isDark ? 'text-white' : 'text-[#0F172A]'}`}>Event Not Available</h2>
             <p className="text-sm text-red-300">{error}</p>
             <button
               onClick={fetchEventData}
@@ -137,21 +159,27 @@ const PublicEventDetailPage = () => {
 
         {/* Loading State */}
         {loading && (
-          <div className="h-[480px] rounded-3xl bg-white/5 border border-white/5 animate-pulse" />
+          <div className={`h-[480px] rounded-3xl animate-pulse border ${
+            isDark ? 'bg-white/5 border-white/5' : 'bg-slate-100 border-slate-200'
+          }`} />
         )}
 
         {/* Event Main Content */}
         {!loading && !error && event && (
           <>
             {/* Event Hero Poster */}
-            <div className="rounded-3xl bg-[#12141C] border border-white/15 overflow-hidden shadow-2xl">
+            <div className={`rounded-3xl border overflow-hidden transition-colors ${
+              isDark ? 'bg-[#12141C] border-white/15 shadow-2xl' : 'bg-white border-slate-200 shadow-md'
+            }`}>
               <div className="relative aspect-[21/9] w-full bg-gray-900 overflow-hidden">
                 <img
-                  src={event.coverUrl || event.bannerUrl || "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200&auto=format&fit=crop"}
+                  src={event.coverImage?.url || event.coverUrl || event.bannerUrl || "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1200&auto=format&fit=crop"}
                   alt={event.title}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#12141C] via-black/40 to-transparent" />
+                <div className={`absolute inset-0 ${
+                  isDark ? 'bg-gradient-to-t from-[#12141C] via-black/40 to-transparent' : 'bg-gradient-to-t from-white/90 via-black/20 to-transparent'
+                }`} />
 
                 <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
                   <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-[#00F0FF] text-[11px] font-black uppercase">
@@ -166,15 +194,17 @@ const PublicEventDetailPage = () => {
 
               <div className="p-6 sm:p-10 space-y-6">
                 <div className="space-y-2">
-                  <h1 className="font-['Syne',sans-serif] text-3xl sm:text-5xl font-black text-white uppercase tracking-tight">
+                  <h1 className={`font-['Syne',sans-serif] text-3xl sm:text-5xl font-black uppercase tracking-tight ${
+                    isDark ? 'text-white' : 'text-[#0F172A]'
+                  }`}>
                     {event.title}
                   </h1>
 
-                  <p className="text-sm font-bold text-gray-400">
+                  <p className={`text-sm font-bold ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>
                     Organized by{' '}
                     <Link
                       to={`/clubs/${club?.id || clubId}`}
-                      className="text-[#00F0FF] hover:underline font-extrabold"
+                      className="text-cyan-500 hover:underline font-extrabold"
                     >
                       {club?.name || event.club?.name || "Campus Club"}
                     </Link>
@@ -182,21 +212,35 @@ const PublicEventDetailPage = () => {
                 </div>
 
                 {/* Details Badges Row */}
-                <div className="flex flex-wrap items-center gap-4 py-4 border-y border-white/10 text-xs font-bold text-gray-300">
-                  <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 border border-white/10">
-                    <Calendar className="w-4 h-4 text-[#00F0FF]" />
+                <div className={`flex flex-wrap items-center gap-4 py-4 border-y text-xs font-bold ${
+                  isDark ? 'border-white/10 text-gray-300' : 'border-slate-200 text-slate-700'
+                }`}>
+                  <div className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border ${
+                    isDark ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-200'
+                  }`}>
+                    <Calendar className="w-4 h-4 text-cyan-500" />
                     <span>{dateInfo.full}</span>
                   </div>
-                  <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 border border-white/10">
-                    <MapPin className="w-4 h-4 text-pink-400" />
-                    <span>{event.location || "Main Auditorium"}</span>
+                  {eventTime && (
+                    <div className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border ${
+                      isDark ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-200'
+                    }`}>
+                      <Clock className="w-4 h-4 text-purple-400" />
+                      <span>{eventTime}</span>
+                    </div>
+                  )}
+                  <div className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border ${
+                    isDark ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-200'
+                  }`}>
+                    <MapPin className="w-4 h-4 text-pink-500" />
+                    <span>{event.location || "Campus Venue"}</span>
                   </div>
                 </div>
 
                 {/* Action CTA Row */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-                  <div className="text-xs text-gray-400 font-semibold">
-                    <span className="text-white font-extrabold">{event.attendeesCount || 120}+ Students</span> already registered
+                  <div className={`text-xs font-semibold ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>
+                    <span className={`font-extrabold ${isDark ? 'text-white' : 'text-[#0F172A]'}`}>{event.attendeesCount || 120}+ Students</span> already registered
                   </div>
 
                   <button
@@ -216,31 +260,43 @@ const PublicEventDetailPage = () => {
             {/* Description & Venue Details */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-              <div className="lg:col-span-8 bg-[#12141C] rounded-3xl p-8 border border-white/10 space-y-4">
-                <h2 className="font-['Syne',sans-serif] text-2xl font-extrabold text-white uppercase">
-                  Event <span className="text-[#00F0FF]">Description</span>
+              <div className={`lg:col-span-8 rounded-3xl p-8 border space-y-4 ${
+                isDark ? 'bg-[#12141C] border-white/10' : 'bg-white border-slate-200 shadow-sm'
+              }`}>
+                <h2 className={`font-['Syne',sans-serif] text-2xl font-extrabold uppercase ${
+                  isDark ? 'text-white' : 'text-[#0F172A]'
+                }`}>
+                  Event <span className="text-cyan-500">Description</span>
                 </h2>
-                <p className="text-sm text-gray-300 leading-relaxed font-normal whitespace-pre-line">
+                <p className={`text-sm leading-relaxed font-normal whitespace-pre-line ${
+                  isDark ? 'text-gray-300' : 'text-slate-600'
+                }`}>
                   {event.description || "Join us for an incredible session organized by our active campus club. Bring your enthusiasm and collaborate with passionate peers!"}
                 </p>
               </div>
 
               {/* Organizer Profile Card */}
-              <div className="lg:col-span-4 bg-[#12141C] rounded-3xl p-6 border border-white/10 space-y-4">
-                <span className="text-[10px] font-black uppercase text-[#00F0FF] tracking-widest">
+              <div className={`lg:col-span-4 rounded-3xl p-6 border space-y-4 ${
+                isDark ? 'bg-[#12141C] border-white/10' : 'bg-white border-slate-200 shadow-sm'
+              }`}>
+                <span className="text-[10px] font-black uppercase text-cyan-500 tracking-widest">
                   Organizing Club
                 </span>
                 <div className="space-y-2">
-                  <h3 className="font-['Syne',sans-serif] text-xl font-bold text-white">
+                  <h3 className={`font-['Syne',sans-serif] text-xl font-bold ${
+                    isDark ? 'text-white' : 'text-[#0F172A]'
+                  }`}>
                     {club?.name || event.club?.name || "Campus Club"}
                   </h3>
-                  <p className="text-xs text-gray-400 line-clamp-3">
+                  <p className={`text-xs line-clamp-3 ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>
                     {club?.description || "Student organization committed to tech innovation, learning, and events."}
                   </p>
                 </div>
                 <Link
                   to={`/clubs/${club?.id || clubId}`}
-                  className="block w-full text-center py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-bold transition-colors"
+                  className={`block w-full text-center py-2.5 rounded-xl text-xs font-bold transition-colors ${
+                    isDark ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
+                  }`}
                 >
                   View Club Profile →
                 </Link>
@@ -255,14 +311,18 @@ const PublicEventDetailPage = () => {
       {/* Confirmation Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#12141C] border border-white/15 rounded-3xl max-w-md w-full p-8 text-center space-y-4 shadow-2xl text-white">
-            <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/30">
+          <div className={`border rounded-3xl max-w-md w-full p-8 text-center space-y-4 shadow-2xl ${
+            isDark ? 'bg-[#12141C] border-white/15 text-white' : 'bg-white border-slate-200 text-[#0F172A]'
+          }`}>
+            <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center mx-auto border border-emerald-500/30">
               <CheckCircle2 className="w-10 h-10" />
             </div>
-            <h3 className="font-['Syne',sans-serif] text-2xl font-black uppercase text-white">
+            <h3 className={`font-['Syne',sans-serif] text-2xl font-black uppercase ${
+              isDark ? 'text-white' : 'text-[#0F172A]'
+            }`}>
               RSVP Confirmed!
             </h3>
-            <p className="text-xs text-gray-300 leading-relaxed">
+            <p className={`text-xs leading-relaxed ${isDark ? 'text-gray-300' : 'text-slate-600'}`}>
               Your registration for <strong>{event?.title}</strong> is saved. Event pass details have been sent.
             </p>
             <button

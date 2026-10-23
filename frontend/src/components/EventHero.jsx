@@ -23,8 +23,8 @@ const formatTimeOrDuration = (event) => {
   if (event.duration) return event.duration;
   if (event.readTime) return event.readTime;
 
-  // Extract time or range from startDate / date
-  const dateVal = event.date || event.eventDate || event.startDate;
+  // Extract time or range from startAt / startDate / date
+  const dateVal = event.startAt || event.date || event.eventDate || event.startDate;
   if (!dateVal) return null;
 
   try {
@@ -36,8 +36,9 @@ const formatTimeOrDuration = (event) => {
       hour12: true,
     });
 
-    if (event.endDate) {
-      const endD = new Date(event.endDate);
+    const endVal = event.endAt || event.endDate;
+    if (endVal) {
+      const endD = new Date(endVal);
       if (!isNaN(endD.getTime())) {
         const endTimeStr = endD.toLocaleTimeString('en-US', {
           hour: 'numeric',
@@ -65,7 +66,7 @@ export const EventHero = ({ event, children, className = '' }) => {
   const category = event.category || event.type || event.tag || 'Featured Event';
   const status = event.status; // e.g., 'UPCOMING', 'LIVE', 'COMPLETED'
   const title = event.title || event.name || 'Untitled Event';
-  const formattedDate = formatDate(event.date || event.eventDate || event.startDate);
+  const formattedDate = formatDate(event.startAt || event.date || event.eventDate || event.startDate);
   const timeOrDuration = formatTimeOrDuration(event);
   const venue = event.venue || event.location || event.club?.name;
 

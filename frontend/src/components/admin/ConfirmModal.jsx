@@ -32,9 +32,9 @@ const ConfirmModal = ({
           initial={{ opacity: 0, scale: 0.98, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.98, y: 8 }}
-          className="relative w-full max-w-md bg-white border border-[#E7E5E4] rounded-lg shadow-lg overflow-hidden z-10"
+          className="relative w-full max-w-md max-h-[92vh] flex flex-col bg-white border border-[#E7E5E4] rounded-lg shadow-lg overflow-hidden z-10"
         >
-          <div className="p-6">
+          <div className="p-6 overflow-y-auto flex-1">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <div

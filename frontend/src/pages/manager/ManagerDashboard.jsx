@@ -470,128 +470,141 @@ const ManagerDashboard = () => {
         </div>
       )}
 
-      {/* CREATE EVENT MODAL */}
+      {/* CREATE EVENT MODAL - Responsive 2-Column on Wide Screens & Scrollable on Mobile */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
           <form
             onSubmit={handleCreateEventSubmit}
-            className={`rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-4 shadow-2xl border ${isDark
+            className={`rounded-3xl max-w-2xl lg:max-w-3xl w-full max-h-[92vh] flex flex-col shadow-2xl border overflow-hidden ${isDark
                 ? 'bg-[#151D2A] border-slate-700 text-slate-100'
                 : 'bg-white border-[#E2E0D5] text-[#0F172A]'
               }`}
           >
-            <div className={`flex items-center justify-between border-b pb-4 ${isDark ? 'border-slate-800' : 'border-[#E8E6DF]'
+            {/* Modal Header */}
+            <div className={`flex items-center justify-between px-6 py-4 border-b shrink-0 ${isDark ? 'border-slate-800 bg-[#151D2A]' : 'border-[#E8E6DF] bg-slate-50/60'
               }`}>
-              <h3 className={`font-['Syne',sans-serif] text-2xl font-black uppercase tracking-tight ${isDark ? 'text-white' : 'text-[#0F172A]'
+              <h3 className={`font-['Syne',sans-serif] text-xl font-black uppercase tracking-tight ${isDark ? 'text-white' : 'text-[#0F172A]'
                 }`}>
                 Create New Event
               </h3>
               <button
                 type="button"
                 onClick={() => setShowCreateModal(false)}
-                className={`text-sm font-bold p-1.5 rounded-full ${isDark ? 'bg-slate-800 text-slate-400 hover:text-white' : 'bg-[#FAF9F5] text-[#64748B] hover:text-[#0F172A]'
+                className={`p-1.5 rounded-full transition-colors cursor-pointer ${isDark ? 'bg-slate-800 text-slate-400 hover:text-white' : 'bg-[#FAF9F5] text-[#64748B] hover:text-[#0F172A]'
                   }`}
+                aria-label="Close modal"
               >
                 ✕
               </button>
             </div>
 
-            {createEventError && (
-              <div className={`p-3 text-xs font-bold rounded-xl border ${isDark ? 'bg-rose-950/50 border-rose-800 text-rose-300' : 'bg-rose-50 border-rose-200 text-rose-700'
-                }`}>
-                {createEventError}
+            {/* Scrollable Form Body */}
+            <div className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-4">
+              {createEventError && (
+                <div className={`p-3 text-xs font-bold rounded-xl border ${isDark ? 'bg-rose-950/50 border-rose-800 text-rose-300' : 'bg-rose-50 border-rose-200 text-rose-700'
+                  }`}>
+                  {createEventError}
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Select Managed Club */}
+                <div>
+                  <label className={`block text-xs font-extrabold uppercase mb-1 ${isDark ? 'text-slate-200' : 'text-[#0F172A]'}`}>
+                    Select Managed Club *
+                  </label>
+                  <select
+                    value={selectedClubId}
+                    onChange={(e) => setSelectedClubId(e.target.value)}
+                    className={`w-full px-4 py-2.5 rounded-xl border text-xs font-bold focus:outline-none focus:border-[#FF5733] ${isDark
+                        ? 'bg-[#0B0F17] border-slate-700 text-slate-100'
+                        : 'bg-[#FAF9F5] border-[#E2E0D5] text-[#0F172A]'
+                      }`}
+                  >
+                    {clubs.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Event Title */}
+                <div>
+                  <label className={`block text-xs font-extrabold uppercase mb-1 ${isDark ? 'text-slate-200' : 'text-[#0F172A]'}`}>
+                    Event Title *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. AI Hackathon 2026"
+                    value={eventTitle}
+                    onChange={(e) => setEventTitle(e.target.value)}
+                    className={`w-full px-4 py-2.5 rounded-xl border text-xs font-medium focus:outline-none focus:border-[#FF5733] ${isDark
+                        ? 'bg-[#0B0F17] border-slate-700 text-slate-100 placeholder-slate-500'
+                        : 'bg-[#FAF9F5] border-[#E2E0D5] text-[#0F172A]'
+                      }`}
+                  />
+                </div>
+
+                {/* Location */}
+                <div>
+                  <label className={`block text-xs font-extrabold uppercase mb-1 ${isDark ? 'text-slate-200' : 'text-[#0F172A]'}`}>
+                    Location / Venue *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Campus Auditorium / Online Zoom"
+                    value={eventLocation}
+                    onChange={(e) => setEventLocation(e.target.value)}
+                    className={`w-full px-4 py-2.5 rounded-xl border text-xs font-medium focus:outline-none focus:border-[#FF5733] ${isDark
+                        ? 'bg-[#0B0F17] border-slate-700 text-slate-100 placeholder-slate-500'
+                        : 'bg-[#FAF9F5] border-[#E2E0D5] text-[#0F172A]'
+                      }`}
+                  />
+                </div>
+
+                {/* Start Date & Time */}
+                <div>
+                  <label className={`block text-xs font-extrabold uppercase mb-1 ${isDark ? 'text-slate-200' : 'text-[#0F172A]'}`}>
+                    Start Date & Time *
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={eventStartAt}
+                    onChange={(e) => setEventStartAt(e.target.value)}
+                    className={`w-full px-4 py-2.5 rounded-xl border text-xs font-medium focus:outline-none focus:border-[#FF5733] ${isDark
+                        ? 'bg-[#0B0F17] border-slate-700 text-slate-100'
+                        : 'bg-[#FAF9F5] border-[#E2E0D5] text-[#0F172A]'
+                      }`}
+                  />
+                </div>
+
+                {/* Description - Spans both columns on desktop */}
+                <div className="md:col-span-2">
+                  <label className={`block text-xs font-extrabold uppercase mb-1 ${isDark ? 'text-slate-200' : 'text-[#0F172A]'}`}>
+                    Description
+                  </label>
+                  <textarea
+                    rows={3}
+                    placeholder="Short event overview, schedule, agenda..."
+                    value={eventDesc}
+                    onChange={(e) => setEventDesc(e.target.value)}
+                    className={`w-full px-4 py-2.5 rounded-xl border text-xs font-medium focus:outline-none focus:border-[#FF5733] resize-none ${isDark
+                        ? 'bg-[#0B0F17] border-slate-700 text-slate-100 placeholder-slate-500'
+                        : 'bg-[#FAF9F5] border-[#E2E0D5] text-[#0F172A]'
+                      }`}
+                  />
+                </div>
               </div>
-            )}
-
-            <div>
-              <label className={`block text-xs font-extrabold uppercase mb-1 ${isDark ? 'text-slate-200' : 'text-[#0F172A]'}`}>
-                Select Managed Club
-              </label>
-              <select
-                value={selectedClubId}
-                onChange={(e) => setSelectedClubId(e.target.value)}
-                className={`w-full px-4 py-3 rounded-2xl border text-xs font-bold focus:outline-none focus:border-[#FF5733] ${isDark
-                    ? 'bg-[#0B0F17] border-slate-700 text-slate-100'
-                    : 'bg-[#FAF9F5] border-[#E2E0D5] text-[#0F172A]'
-                  }`}
-              >
-                {clubs.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
             </div>
 
-            <div>
-              <label className={`block text-xs font-extrabold uppercase mb-1 ${isDark ? 'text-slate-200' : 'text-[#0F172A]'}`}>
-                Event Title *
-              </label>
-              <input
-                type="text"
-                required
-                placeholder="e.g. AI Hackathon 2026"
-                value={eventTitle}
-                onChange={(e) => setEventTitle(e.target.value)}
-                className={`w-full px-4 py-3 rounded-2xl border text-xs font-medium focus:outline-none focus:border-[#FF5733] ${isDark
-                    ? 'bg-[#0B0F17] border-slate-700 text-slate-100 placeholder-slate-500'
-                    : 'bg-[#FAF9F5] border-[#E2E0D5] text-[#0F172A]'
-                  }`}
-              />
-            </div>
-
-            <div>
-              <label className={`block text-xs font-extrabold uppercase mb-1 ${isDark ? 'text-slate-200' : 'text-[#0F172A]'}`}>
-                Location
-              </label>
-              <input
-                type="text"
-                placeholder="e.g. Campus Auditorium / Online Zoom"
-                value={eventLocation}
-                onChange={(e) => setEventLocation(e.target.value)}
-                className={`w-full px-4 py-3 rounded-2xl border text-xs font-medium focus:outline-none focus:border-[#FF5733] ${isDark
-                    ? 'bg-[#0B0F17] border-slate-700 text-slate-100 placeholder-slate-500'
-                    : 'bg-[#FAF9F5] border-[#E2E0D5] text-[#0F172A]'
-                  }`}
-              />
-            </div>
-
-            <div>
-              <label className={`block text-xs font-extrabold uppercase mb-1 ${isDark ? 'text-slate-200' : 'text-[#0F172A]'}`}>
-                Start Date & Time
-              </label>
-              <input
-                type="datetime-local"
-                value={eventStartAt}
-                onChange={(e) => setEventStartAt(e.target.value)}
-                className={`w-full px-4 py-3 rounded-2xl border text-xs font-medium focus:outline-none focus:border-[#FF5733] ${isDark
-                    ? 'bg-[#0B0F17] border-slate-700 text-slate-100'
-                    : 'bg-[#FAF9F5] border-[#E2E0D5] text-[#0F172A]'
-                  }`}
-              />
-            </div>
-
-            <div>
-              <label className={`block text-xs font-extrabold uppercase mb-1 ${isDark ? 'text-slate-200' : 'text-[#0F172A]'}`}>
-                Description
-              </label>
-              <textarea
-                rows={3}
-                placeholder="Short event overview..."
-                value={eventDesc}
-                onChange={(e) => setEventDesc(e.target.value)}
-                className={`w-full px-4 py-3 rounded-2xl border text-xs font-medium focus:outline-none focus:border-[#FF5733] ${isDark
-                    ? 'bg-[#0B0F17] border-slate-700 text-slate-100 placeholder-slate-500'
-                    : 'bg-[#FAF9F5] border-[#E2E0D5] text-[#0F172A]'
-                  }`}
-              />
-            </div>
-
-            <div className={`flex justify-end gap-3 pt-4 border-t ${isDark ? 'border-slate-800' : 'border-[#E8E6DF]'}`}>
+            {/* Modal Actions Footer */}
+            <div className={`px-6 py-4 border-t flex justify-end gap-3 shrink-0 ${isDark ? 'border-slate-800 bg-[#151D2A]' : 'border-[#E8E6DF] bg-slate-50/60'}`}>
               <button
                 type="button"
                 onClick={() => setShowCreateModal(false)}
-                className={`px-5 py-2.5 rounded-full border text-xs font-extrabold uppercase tracking-wider ${isDark
+                className={`px-5 py-2.5 rounded-full border text-xs font-extrabold uppercase tracking-wider cursor-pointer ${isDark
                     ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700'
                     : 'bg-[#FAF9F5] border-[#E2E0D5] text-[#0F172A] hover:bg-[#F0EEE6]'
                   }`}

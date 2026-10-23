@@ -357,73 +357,80 @@ const ManagerEventDetailPage = () => {
             )}
 
             <form onSubmit={handleSaveEvent} className="space-y-4">
-              <div>
-                <label className="block text-xs font-extrabold text-[#0F172A] uppercase tracking-wider mb-1">
-                  Event Title *
-                </label>
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl text-[#0F172A] text-xs font-medium focus:outline-none focus:border-[#FF5733]"
-                  required
-                />
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Event Title - Spans full width */}
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-extrabold text-[#0F172A] uppercase tracking-wider mb-1">
+                    Event Title *
+                  </label>
+                  <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl text-[#0F172A] text-xs font-medium focus:outline-none focus:border-[#FF5733]"
+                    required
+                  />
+                </div>
 
-              <div>
-                <label className="block text-xs font-extrabold text-[#0F172A] uppercase tracking-wider mb-1">
-                  Description *
-                </label>
-                <textarea
-                  rows={4}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl text-[#0F172A] text-xs font-medium focus:outline-none focus:border-[#FF5733] resize-none"
-                  required
-                />
-              </div>
+                {/* Location */}
+                <div>
+                  <label className="block text-xs font-extrabold text-[#0F172A] uppercase tracking-wider mb-1">
+                    Location *
+                  </label>
+                  <input
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl text-[#0F172A] text-xs font-medium focus:outline-none focus:border-[#FF5733]"
+                    required
+                  />
+                </div>
 
-              <div>
-                <label className="block text-xs font-extrabold text-[#0F172A] uppercase tracking-wider mb-1">
-                  Location *
-                </label>
-                <input
-                  type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl text-[#0F172A] text-xs font-medium focus:outline-none focus:border-[#FF5733]"
-                  required
-                />
-              </div>
+                {/* Registration URL */}
+                <div>
+                  <label className="block text-xs font-extrabold text-[#0F172A] uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                    <ExternalLink className="w-3.5 h-3.5 text-[#2563EB]" />
+                    <span>Registration / Redirect URL (Optional)</span>
+                  </label>
+                  <input
+                    type="url"
+                    value={registrationUrl}
+                    onChange={(e) => setRegistrationUrl(e.target.value)}
+                    placeholder="e.g. https://forms.google.com/your-form or https://eventbrite.com/..."
+                    className="w-full px-4 py-2.5 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl text-[#0F172A] text-xs font-medium focus:outline-none focus:border-[#FF5733]"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-xs font-extrabold text-[#0F172A] uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                  <ExternalLink className="w-3.5 h-3.5 text-[#2563EB]" />
-                  <span>Registration / Redirect URL (Google Forms, etc.)</span>
-                </label>
-                <input
-                  type="url"
-                  value={registrationUrl}
-                  onChange={(e) => setRegistrationUrl(e.target.value)}
-                  placeholder="e.g. https://forms.google.com/your-form or https://eventbrite.com/..."
-                  className="w-full px-4 py-2.5 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl text-[#0F172A] text-xs font-medium focus:outline-none focus:border-[#FF5733]"
-                />
-              </div>
+                {/* Description - Spans full width */}
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-extrabold text-[#0F172A] uppercase tracking-wider mb-1">
+                    Description *
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl text-[#0F172A] text-xs font-medium focus:outline-none focus:border-[#FF5733] resize-none"
+                    required
+                  />
+                </div>
 
-              <div className="space-y-4 pt-2 border-t border-[#E8E6DF]">
-                <DateTimePicker
-                  label="Start Date & Time"
-                  value={startAt}
-                  onChange={setStartAt}
-                  required
-                />
+                {/* 2-Column Date Pickers on wide screens */}
+                <div className="md:col-span-2 pt-2 border-t border-[#E8E6DF] grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <DateTimePicker
+                    label="Start Date & Time"
+                    value={startAt}
+                    onChange={setStartAt}
+                    required
+                  />
 
-                <DateTimePicker
-                  label="End Date & Time (Optional)"
-                  value={endAt}
-                  onChange={setEndAt}
-                  min={startAt}
-                />
+                  <DateTimePicker
+                    label="End Date & Time (Optional)"
+                    value={endAt}
+                    onChange={setEndAt}
+                    min={startAt}
+                  />
+                </div>
               </div>
 
               <div className="flex justify-end pt-2">

@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
-const Modal = ({ isOpen, onClose, title, children }) => {
+const Modal = ({ isOpen, onClose, title, children, maxWidth = 'max-w-xl' }) => {
+  const { isDark } = useTheme();
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
@@ -19,28 +22,39 @@ const Modal = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
       {/* Backdrop */}
       <div 
-        className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-200" 
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-200" 
         onClick={onClose}
       />
 
       {/* Dialog */}
-      <div className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden text-slate-100 transition-all transform scale-100 z-10">
+      <div className={`relative w-full ${maxWidth} max-h-[92vh] flex flex-col rounded-3xl shadow-2xl border transition-all transform scale-100 z-10 overflow-hidden ${
+        isDark ? 'bg-[#151D2A] border-slate-700/80 text-slate-100' : 'bg-white border-[#E2E0D5] text-[#0F172A]'
+      }`}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-900/50">
-          <h3 className="text-lg font-semibold text-white tracking-wide">{title}</h3>
+        <div className={`flex items-center justify-between px-6 py-4 border-b shrink-0 ${
+          isDark ? 'border-slate-800 bg-[#151D2A]' : 'border-[#E8E6DF] bg-slate-50/60'
+        }`}>
+          <h3 className={`text-lg font-bold font-['Syne',sans-serif] uppercase tracking-tight ${
+            isDark ? 'text-white' : 'text-[#0F172A]'
+          }`}>{title}</h3>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+            className={`p-1.5 rounded-full transition-colors cursor-pointer ${
+              isDark ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200'
+            }`}
+            aria-label="Close modal"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-6">{children}</div>
+        {/* Content with Smooth Scrolling */}
+        <div className="p-5 sm:p-6 overflow-y-auto flex-1 overscroll-contain">
+          {children}
+        </div>
       </div>
     </div>
   );

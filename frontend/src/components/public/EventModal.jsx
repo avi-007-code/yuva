@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Calendar, MapPin, Clock, Building2, Tag, Image as ImageIcon, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../../context/ThemeContext';
 
 const formatDate = (dateStr) => {
   if (!dateStr) return 'TBA';
@@ -26,6 +27,7 @@ const formatTime = (dateStr) => {
 };
 
 const EventModal = ({ event, club, onClose, onOpenGallery }) => {
+  const { isDark } = useTheme();
   if (!event) return null;
 
   const coverUrl = event.coverImage?.url;
@@ -33,15 +35,19 @@ const EventModal = ({ event, club, onClose, onOpenGallery }) => {
   const hasGallery = Array.isArray(event.gallery) && event.gallery.length > 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md overflow-y-auto">
       <div
-        className="relative w-full max-w-2xl bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl my-8 animate-in fade-in zoom-in duration-200"
+        className={`relative w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl my-8 animate-in fade-in zoom-in duration-200 border transition-colors ${
+          isDark ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-200 text-[#0F172A]'
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 p-2.5 bg-slate-950/60 hover:bg-slate-950/90 text-slate-400 hover:text-white rounded-full border border-slate-700/50 backdrop-blur-md transition-all shadow-lg"
+          className={`absolute top-4 right-4 z-10 p-2.5 rounded-full border backdrop-blur-md transition-all shadow-lg cursor-pointer ${
+            isDark ? 'bg-slate-950/60 hover:bg-slate-950 text-slate-400 hover:text-white border-slate-700/50' : 'bg-white/80 hover:bg-white text-slate-600 hover:text-slate-900 border-slate-200'
+          }`}
           aria-label="Close modal"
         >
           <X className="w-5 h-5" />
@@ -87,7 +93,11 @@ const EventModal = ({ event, club, onClose, onOpenGallery }) => {
               <Link
                 to={`/clubs/${clubInfo.id}`}
                 onClick={onClose}
-                className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-slate-950/70 text-slate-200 border border-slate-700/60 hover:border-indigo-500 transition-all backdrop-blur-md"
+                className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full border transition-all backdrop-blur-md ${
+                  isDark
+                    ? 'bg-slate-950/70 text-slate-200 border-slate-700/60 hover:border-indigo-500'
+                    : 'bg-white/90 text-slate-700 border-slate-300 hover:border-indigo-500'
+                }`}
               >
                 <Building2 className="w-3.5 h-3.5 text-indigo-400" />
                 <span>{clubInfo.name}</span>
@@ -99,48 +109,58 @@ const EventModal = ({ event, club, onClose, onOpenGallery }) => {
         {/* Content Details */}
         <div className="p-6 md:p-8 space-y-6">
           <div>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
+            <h2 className={`text-2xl md:text-3xl font-extrabold tracking-tight ${
+              isDark ? 'text-white' : 'text-slate-900'
+            }`}>
               {event.title}
             </h2>
           </div>
 
           {/* Date, Time, Location Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-4 bg-slate-950/60 border border-slate-800 rounded-2xl flex items-start gap-3">
-              <div className="p-2.5 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/20">
+            <div className={`p-4 rounded-2xl flex items-start gap-3 border transition-colors ${
+              isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-slate-50 border-slate-200'
+            }`}>
+              <div className="p-2.5 bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 rounded-xl border border-indigo-500/20">
                 <Calendar className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Date & Time</p>
-                <p className="text-sm font-medium text-white mt-0.5">{formatDate(event.startAt)}</p>
-                <p className="text-xs text-indigo-300 font-mono mt-0.5">
+                <p className={`text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Date & Time</p>
+                <p className={`text-sm font-medium mt-0.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>{formatDate(event.startAt)}</p>
+                <p className="text-xs text-indigo-600 dark:text-indigo-300 font-mono mt-0.5">
                   {formatTime(event.startAt)} {event.endAt ? ` - ${formatTime(event.endAt)}` : ''}
                 </p>
               </div>
             </div>
 
-            <div className="p-4 bg-slate-950/60 border border-slate-800 rounded-2xl flex items-start gap-3">
-              <div className="p-2.5 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
+            <div className={`p-4 rounded-2xl flex items-start gap-3 border transition-colors ${
+              isDark ? 'bg-slate-950/60 border-slate-800' : 'bg-slate-50 border-slate-200'
+            }`}>
+              <div className="p-2.5 bg-purple-500/10 text-purple-500 dark:text-purple-400 rounded-xl border border-purple-500/20">
                 <MapPin className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Location</p>
-                <p className="text-sm font-medium text-white mt-0.5">{event.location || 'Campus Center'}</p>
+                <p className={`text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Location</p>
+                <p className={`text-sm font-medium mt-0.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>{event.location || 'Campus Center'}</p>
               </div>
             </div>
           </div>
 
           {/* Description */}
           <div className="space-y-2">
-            <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">About This Event</h3>
-            <p className="text-sm text-slate-300 leading-relaxed whitespace-pre-line bg-slate-950/30 p-4 border border-slate-800/60 rounded-2xl">
+            <h3 className={`text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>About This Event</h3>
+            <p className={`text-sm leading-relaxed whitespace-pre-line p-4 rounded-2xl border transition-colors ${
+              isDark ? 'text-slate-300 bg-slate-950/30 border-slate-800/60' : 'text-slate-700 bg-slate-50 border-slate-200'
+            }`}>
               {event.description || 'No description provided.'}
             </p>
           </div>
 
           {/* Action buttons: Registration / Redirect Link & Gallery */}
           {((event.registrationUrl || event.url || event.externalUrl || event.link) || hasGallery) && (
-            <div className="pt-3 flex flex-wrap items-center justify-between gap-3 border-t border-slate-800/80">
+            <div className={`pt-3 flex flex-wrap items-center justify-between gap-3 border-t ${
+              isDark ? 'border-slate-800/80' : 'border-slate-200'
+            }`}>
               {(event.registrationUrl || event.url || event.externalUrl || event.link) ? (
                 <a
                   href={event.registrationUrl || event.url || event.externalUrl || event.link}
@@ -159,9 +179,13 @@ const EventModal = ({ event, club, onClose, onOpenGallery }) => {
                     onClose();
                     if (onOpenGallery) onOpenGallery(event);
                   }}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold uppercase tracking-wider rounded-xl transition"
+                  className={`inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition border ${
+                    isDark
+                      ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300'
+                  }`}
                 >
-                  <ImageIcon className="w-4 h-4 text-purple-400" />
+                  <ImageIcon className="w-4 h-4 text-purple-500 dark:text-purple-400" />
                   <span>Gallery ({event.gallery.length})</span>
                 </button>
               )}

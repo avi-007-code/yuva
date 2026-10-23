@@ -4,6 +4,7 @@ import { publicApi } from '../../api/publicApi';
 import PublicLayout from '../../components/public/PublicLayout';
 import EventModal from '../../components/public/EventModal';
 import GalleryLightbox from '../../components/public/GalleryLightbox';
+import { useTheme } from '../../context/ThemeContext';
 import { getCloudinaryUrl, CLOUDINARY_TRANSFORMS } from '../../utils/cloudinary';
 import { getClubCoverImage } from '../../utils/clubCovers';
 import {
@@ -24,9 +25,9 @@ import {
 } from 'lucide-react';
 
 const formatDateParts = (dateString) => {
-  if (!dateString) return { day: '15', month: 'SEP' };
+  if (!dateString) return { day: 'TBA', month: 'TBA' };
   const dateObj = new Date(dateString);
-  if (isNaN(dateObj.getTime())) return { day: '15', month: 'SEP' };
+  if (isNaN(dateObj.getTime())) return { day: 'TBA', month: 'TBA' };
   const day = dateObj.getDate().toString().padStart(2, '0');
   const month = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
   return { day, month };
@@ -35,6 +36,7 @@ const formatDateParts = (dateString) => {
 const PublicClubDetailPage = () => {
   const { clubId } = useParams();
   const navigate = useNavigate();
+  const { isDark } = useTheme();
 
   const [club, setClub] = useState(null);
   const [clubLoading, setClubLoading] = useState(true);
@@ -129,7 +131,11 @@ const PublicClubDetailPage = () => {
         {/* Back Link */}
         <button
           onClick={() => navigate('/clubs')}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-xs font-extrabold uppercase text-gray-300 hover:text-white hover:border-white/20 transition cursor-pointer"
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-extrabold uppercase transition cursor-pointer ${
+            isDark
+              ? 'bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:border-white/20'
+              : 'bg-white border border-slate-200 text-slate-700 hover:text-slate-900 shadow-2xs hover:border-slate-300'
+          }`}
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to All Clubs</span>
@@ -137,7 +143,9 @@ const PublicClubDetailPage = () => {
 
         {/* Club Profile Hero Section */}
         {clubLoading ? (
-          <div className="h-64 rounded-3xl bg-white/5 border border-white/5 animate-pulse" />
+          <div className={`h-64 rounded-3xl animate-pulse border ${
+            isDark ? 'bg-white/5 border-white/5' : 'bg-slate-100 border-slate-200'
+          }`} />
         ) : clubError ? (
           <div className="p-8 bg-red-500/10 border border-red-500/20 rounded-3xl text-center space-y-4">
             <AlertCircle className="w-10 h-10 text-red-400 mx-auto" />
@@ -151,14 +159,20 @@ const PublicClubDetailPage = () => {
             </button>
           </div>
         ) : club ? (
-          <div className="rounded-3xl bg-[#12141C] border border-white/10 overflow-hidden shadow-2xl">
-            <div className="relative h-56 sm:h-72 bg-gray-900 overflow-hidden">
+          <div className={`rounded-3xl border overflow-hidden transition-colors ${
+            isDark
+              ? 'bg-[#12141C] border-white/10 shadow-2xl'
+              : 'bg-white border-slate-200 shadow-md'
+          }`}>
+            <div className="relative h-36 sm:h-44 bg-gray-900 overflow-hidden">
               <img
                 src={getClubCoverImage(club)}
                 alt={club.name}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#12141C] via-black/30 to-transparent" />
+              <div className={`absolute inset-0 ${
+                isDark ? 'bg-gradient-to-t from-[#12141C] via-black/30 to-transparent' : 'bg-gradient-to-t from-white/90 via-black/20 to-transparent'
+              }`} />
 
               <div className="absolute top-4 right-4">
                 <span className="px-3.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/15 text-[10px] font-extrabold uppercase tracking-widest text-[#00F0FF]">
@@ -170,7 +184,9 @@ const PublicClubDetailPage = () => {
             <div className="p-6 sm:p-10 pt-0 relative">
               <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 -mt-12 sm:-mt-16 mb-6">
                 <div className="flex items-end gap-4">
-                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl overflow-hidden border-4 border-[#12141C] shadow-xl bg-gray-900 shrink-0">
+                  <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-3xl overflow-hidden border-4 shadow-xl bg-gray-900 shrink-0 ${
+                    isDark ? 'border-[#12141C]' : 'border-white'
+                  }`}>
                     <img
                       src={club.logoUrl || club.coverImage || "https://images.unsplash.com/photo-1531403009284-440f080d1e12?q=80&w=200&auto=format&fit=crop"}
                       alt={club.name}
@@ -179,20 +195,26 @@ const PublicClubDetailPage = () => {
                   </div>
                   <div>
                     <span className="text-[10px] font-black uppercase text-[#00F0FF] tracking-widest">{club.category}</span>
-                    <h1 className="font-['Syne',sans-serif] text-3xl sm:text-4xl font-extrabold text-white uppercase tracking-tight">
+                    <h1 className={`font-['Syne',sans-serif] text-3xl sm:text-4xl font-extrabold uppercase tracking-tight ${
+                      isDark ? 'text-white' : 'text-[#0F172A]'
+                    }`}>
                       {club.name}
                     </h1>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-gray-300 text-xs font-bold">
+                  <span className={`px-4 py-2 rounded-full border text-xs font-bold ${
+                    isDark ? 'bg-white/5 border-white/10 text-gray-300' : 'bg-slate-100 border-slate-200 text-slate-700'
+                  }`}>
                     {club._count?.members || club.membersCount || 100}+ Members
                   </span>
                 </div>
               </div>
 
-              <p className="text-gray-300 text-sm leading-relaxed max-w-4xl font-normal">
+              <p className={`text-sm leading-relaxed max-w-4xl font-normal ${
+                isDark ? 'text-gray-300' : 'text-slate-600'
+              }`}>
                 {club.description || "Active student organization committed to fostering skills, projects, and collaboration across campus."}
               </p>
             </div>
@@ -201,53 +223,71 @@ const PublicClubDetailPage = () => {
 
         {/* Upcoming Events Section */}
         <section className="space-y-6">
-          <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          <div className={`flex items-center justify-between border-b pb-4 ${
+            isDark ? 'border-white/10' : 'border-slate-200'
+          }`}>
             <div>
               <span className="text-xs font-extrabold uppercase text-[#00F0FF]">Live Schedule</span>
-              <h2 className="font-['Syne',sans-serif] text-2xl font-extrabold text-white uppercase">
+              <h2 className={`font-['Syne',sans-serif] text-2xl font-extrabold uppercase ${
+                isDark ? 'text-white' : 'text-[#0F172A]'
+              }`}>
                 Upcoming <span className="text-[#00F0FF]">Events</span>
               </h2>
             </div>
           </div>
 
           {upcomingLoading ? (
-            <div className="text-center py-12 text-gray-400 text-sm">Loading upcoming events...</div>
+            <div className={`text-center py-12 text-sm ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>Loading upcoming events...</div>
           ) : upcomingError ? (
             <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm">{upcomingError}</div>
           ) : upcomingEvents.length === 0 ? (
-            <div className="text-center py-12 bg-[#12141C] rounded-3xl border border-white/10 text-gray-400 text-sm">
+            <div className={`text-center py-12 rounded-3xl border text-sm ${
+              isDark ? 'bg-[#12141C] border-white/10 text-gray-400' : 'bg-white border-slate-200 text-slate-500 shadow-xs'
+            }`}>
               No upcoming events currently scheduled for {club?.name || 'this club'}.
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {upcomingEvents.map((evt) => {
-                const dateParts = formatDateParts(evt.date || evt.startDate);
+                const dateParts = formatDateParts(evt.startAt || evt.startDate || evt.date);
                 return (
                   <div
                     key={evt.id}
                     onClick={() => navigate(`/clubs/${clubId}/events/${evt.id}`)}
-                    className="group rounded-2xl overflow-hidden bg-[#12141C] border border-white/10 hover:border-cyan-500/40 transition-all p-5 cursor-pointer flex flex-col justify-between"
+                    className={`group rounded-2xl overflow-hidden border transition-all p-5 cursor-pointer flex flex-col justify-between ${
+                      isDark
+                        ? 'bg-[#12141C] border-white/10 hover:border-cyan-500/40'
+                        : 'bg-white border-slate-200 hover:border-cyan-500/50 shadow-xs hover:shadow-md'
+                    }`}
                   >
                     <div>
                       <div className="flex items-center gap-3 mb-3">
-                        <div className="w-12 h-12 rounded-xl bg-black border border-white/20 text-white flex flex-col items-center justify-center font-['Syne',sans-serif] leading-none shrink-0">
+                        <div className={`w-12 h-12 rounded-xl border flex flex-col items-center justify-center font-['Syne',sans-serif] leading-none shrink-0 ${
+                          isDark ? 'bg-black border-white/20 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
+                        }`}>
                           <span className="text-[9px] text-[#00F0FF] font-bold uppercase">{dateParts.month}</span>
                           <span className="text-lg font-black">{dateParts.day}</span>
                         </div>
                         <div>
-                          <h3 className="font-['Syne',sans-serif] text-lg font-bold text-white group-hover:text-[#00F0FF] transition-colors line-clamp-1">
+                          <h3 className={`font-['Syne',sans-serif] text-lg font-bold group-hover:text-[#00F0FF] transition-colors line-clamp-1 ${
+                            isDark ? 'text-white' : 'text-[#0F172A]'
+                          }`}>
                             {evt.title}
                           </h3>
-                          <span className="text-xs text-gray-400">{evt.location || "Main Auditorium"}</span>
+                          <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>{evt.location || "Main Auditorium"}</span>
                         </div>
                       </div>
 
-                      <p className="text-xs text-gray-300 line-clamp-2 leading-relaxed mb-4">
+                      <p className={`text-xs line-clamp-2 leading-relaxed mb-4 ${
+                        isDark ? 'text-gray-300' : 'text-slate-600'
+                      }`}>
                         {evt.description}
                       </p>
                     </div>
 
-                    <div className="pt-3 border-t border-white/5 flex items-center justify-between text-xs font-bold text-[#00F0FF]">
+                    <div className={`pt-3 border-t flex items-center justify-between text-xs font-bold text-[#00F0FF] ${
+                      isDark ? 'border-white/5' : 'border-slate-100'
+                    }`}>
                       <span>RSVP Open</span>
                       <span className="group-hover:translate-x-1 transition-transform">View Details →</span>
                     </div>
@@ -260,17 +300,23 @@ const PublicClubDetailPage = () => {
 
         {/* Past Events & Gallery Section */}
         <section className="space-y-6 pt-6">
-          <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          <div className={`flex items-center justify-between border-b pb-4 ${
+            isDark ? 'border-white/10' : 'border-slate-200'
+          }`}>
             <div>
               <span className="text-xs font-extrabold uppercase text-purple-400">Archives</span>
-              <h2 className="font-['Syne',sans-serif] text-2xl font-extrabold text-white uppercase">
-                Past Events & <span className="text-purple-400">Gallery</span>
+              <h2 className={`font-['Syne',sans-serif] text-2xl font-extrabold uppercase ${
+                isDark ? 'text-white' : 'text-[#0F172A]'
+              }`}>
+                Past Events & <span className="text-purple-500">Gallery</span>
               </h2>
             </div>
           </div>
 
           {!pastLoading && !pastError && pastEvents.length === 0 && (
-            <div className="text-center py-12 bg-[#12141C] rounded-3xl border border-white/10 text-gray-400 text-sm">
+            <div className={`text-center py-12 rounded-3xl border text-sm ${
+              isDark ? 'bg-[#12141C] border-white/10 text-gray-400' : 'bg-white border-slate-200 text-slate-500 shadow-xs'
+            }`}>
               No completed past events recorded yet.
             </div>
           )}
@@ -281,11 +327,15 @@ const PublicClubDetailPage = () => {
                 <div
                   key={evt.id}
                   onClick={() => setActiveGalleryEvent(evt)}
-                  className="group bg-[#12141C] border border-white/10 hover:border-purple-400/50 rounded-3xl overflow-hidden transition-all duration-300 cursor-pointer flex flex-col justify-between"
+                  className={`group rounded-3xl overflow-hidden border transition-all duration-300 cursor-pointer flex flex-col justify-between ${
+                    isDark
+                      ? 'bg-[#12141C] border-white/10 hover:border-purple-400/50'
+                      : 'bg-white border-slate-200 hover:border-purple-400/60 shadow-xs hover:shadow-md'
+                  }`}
                 >
                   <div className="relative h-44 w-full bg-gray-900 overflow-hidden">
                     <img
-                      src={evt.coverUrl || evt.bannerUrl || "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=600&auto=format&fit=crop"}
+                      src={evt.coverImage?.url || evt.coverUrl || evt.bannerUrl || "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=600&auto=format&fit=crop"}
                       alt={evt.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
@@ -296,15 +346,19 @@ const PublicClubDetailPage = () => {
 
                   <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                     <div>
-                      <h3 className="font-['Syne',sans-serif] text-lg font-bold text-white group-hover:text-purple-300 transition line-clamp-1">
+                      <h3 className={`font-['Syne',sans-serif] text-lg font-bold group-hover:text-purple-400 transition line-clamp-1 ${
+                        isDark ? 'text-white' : 'text-[#0F172A]'
+                      }`}>
                         {evt.title}
                       </h3>
-                      <p className="text-xs text-gray-400 line-clamp-2 mt-1">
+                      <p className={`text-xs line-clamp-2 mt-1 ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>
                         {evt.description}
                       </p>
                     </div>
 
-                    <div className="pt-3 border-t border-white/5 flex items-center justify-between text-xs text-purple-400 font-bold">
+                    <div className={`pt-3 border-t flex items-center justify-between text-xs font-bold text-purple-500 ${
+                      isDark ? 'border-white/5' : 'border-slate-100'
+                    }`}>
                       <span>Completed Event</span>
                       <span className="group-hover:underline">View Gallery →</span>
                     </div>

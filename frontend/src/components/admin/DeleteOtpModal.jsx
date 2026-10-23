@@ -124,16 +124,18 @@ const DeleteOtpModal = ({
           initial={{ opacity: 0, scale: 0.98, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.98, y: 8 }}
-          className="relative w-full max-w-md bg-white border border-[#E7E5E4] rounded-lg shadow-lg overflow-hidden z-10 p-6 sm:p-8"
+          className="relative w-full max-w-md max-h-[92vh] flex flex-col bg-white border border-[#E7E5E4] rounded-lg shadow-lg overflow-hidden z-10"
         >
           {/* Close Button */}
           <button
             onClick={onClose}
             disabled={isDeleting || isRequestingCode}
-            className="absolute top-5 right-5 text-[#8E8B85] hover:text-[#1C1B1F] transition-colors disabled:opacity-50"
+            className="absolute top-5 right-5 z-20 text-[#8E8B85] hover:text-[#1C1B1F] transition-colors disabled:opacity-50"
           >
             <X className="w-4 h-4" />
           </button>
+
+          <div className="p-6 sm:p-8 overflow-y-auto flex-1">
 
           {/* STAGE 1: Requesting / Sending Code Loading State */}
           {stage === 'requesting' && (
@@ -281,6 +283,7 @@ const DeleteOtpModal = ({
               </div>
             </form>
           )}
+          </div>
         </motion.div>
       </div>
     </AnimatePresence>
