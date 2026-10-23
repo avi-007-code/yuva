@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTheme } from '../../context/ThemeContext';
 import { managerApi } from '../../api/managerApi';
 import Modal from '../../components/common/Modal';
 import EmptyState from '../../components/common/EmptyState';
@@ -53,6 +54,7 @@ const formatTime = (dateStr) => {
 const ManagerClubDetailPage = () => {
   const { clubId } = useParams();
   const navigate = useNavigate();
+  const { isDark } = useTheme();
 
   // Club info state
   const [club, setClub] = useState(null);
