@@ -179,7 +179,7 @@ const PublicHomePage = () => {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
             </span>
             <span className="whitespace-nowrap flex items-center gap-1.5">
-              <span>LIVE TICKER</span>
+              <span>NEW EVENTS</span>
             </span>
           </div>
 
