@@ -149,8 +149,81 @@ const PublicHomePage = () => {
   const spotlightEvent = events[0];
   const nextUpEvents = events.slice(1, 3);
 
+  const handleNavigateToEvent = (ev) => {
+    if (!ev) return;
+    const cId = ev.club?.id || ev.clubId || 'campus';
+    navigate(`/clubs/${cId}/events/${ev.id}`);
+  };
+
+  // Marquee list repeating items for continuous, infinite flow
+  const marqueeEvents = events.length > 0 ? [...events, ...events, ...events] : [];
+
   return (
     <PublicLayout>
+
+      {/* Real-time Campus Events Marquee Ticker */}
+      {events.length > 0 && (
+        <div className={`relative border-b overflow-hidden flex items-center transition-colors select-none ${
+          isDark
+            ? 'bg-[#0E121E]/95 border-white/10 text-gray-200'
+            : 'bg-white border-slate-200/90 text-slate-800 shadow-2xs'
+        }`}>
+          {/* Pinned Left Indicator Badge */}
+          <div className={`shrink-0 z-20 flex items-center gap-2 px-3.5 sm:px-4 py-2 font-['Syne',sans-serif] font-black text-[11px] sm:text-xs uppercase tracking-wider border-r ${
+            isDark
+              ? 'bg-[#0E121E] border-white/10 text-[#00F0FF]'
+              : 'bg-slate-50 border-slate-200 text-cyan-700'
+          }`}>
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+            </span>
+            <span className="whitespace-nowrap flex items-center gap-1.5">
+              <span>LIVE TICKER</span>
+            </span>
+          </div>
+
+          {/* Marquee Track with Hover Pause */}
+          <div className="relative overflow-hidden flex-1 py-1.5 flex items-center">
+            {/* Gradient Edge Masks */}
+            <div className={`pointer-events-none absolute left-0 top-0 bottom-0 w-8 z-10 ${
+              isDark ? 'bg-gradient-to-r from-[#0E121E] to-transparent' : 'bg-gradient-to-r from-white to-transparent'
+            }`} />
+            <div className={`pointer-events-none absolute right-0 top-0 bottom-0 w-12 z-10 ${
+              isDark ? 'bg-gradient-to-l from-[#0E121E] to-transparent' : 'bg-gradient-to-l from-white to-transparent'
+            }`} />
+
+            <div className="animate-marquee flex items-center">
+              {marqueeEvents.map((ev, idx) => {
+                const dateParts = formatDateParts(ev.startAt);
+                return (
+                  <button
+                    key={`${ev.id}-${idx}`}
+                    onClick={() => handleNavigateToEvent(ev)}
+                    className={`inline-flex items-center gap-2.5 px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer group whitespace-nowrap mx-1.5 border ${
+                      isDark
+                        ? 'bg-white/5 hover:bg-cyan-500/10 border-white/10 hover:border-cyan-500/40 text-gray-200 hover:text-white'
+                        : 'bg-slate-50 hover:bg-cyan-50 border-slate-200 hover:border-cyan-300 text-slate-700 hover:text-slate-900 shadow-2xs'
+                    }`}
+                    title="Click to open dedicated event page"
+                  >
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
+                      <Sparkles className="w-2.5 h-2.5" />
+                      <span>{ev.club?.name || 'Club'}</span>
+                    </span>
+                    <span className="font-semibold text-xs">{ev.title}</span>
+                    <span className="text-[11px] opacity-75 flex items-center gap-1">
+                      <Calendar className="w-3 h-3 text-cyan-500" />
+                      {dateParts.month} {dateParts.day}
+                    </span>
+                    <ArrowUpRight className="w-3 h-3 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 1. STUDENT-FOCUSED HERO SECTION (Information first, sleek search, compact spotlight) */}
       <section className={`relative pt-10 pb-12 md:pt-16 md:pb-16 flex items-center overflow-hidden transition-colors duration-300 ${
@@ -352,23 +425,14 @@ const PublicHomePage = () => {
                       </div>
                     </div>
 
-                    {/* Action Link */}
-                    <div className="pt-1 flex items-center gap-2">
+                    {/* Dominant Primary Action Button to Event Detail Page */}
+                    <div className="pt-1">
                       <button
-                        onClick={() => setSelectedEvent(spotlightEvent)}
-                        className="flex-1 py-2.5 px-4 rounded-xl bg-[#00F0FF] hover:bg-[#38f2ff] text-black font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm cursor-pointer"
+                        onClick={() => handleNavigateToEvent(spotlightEvent)}
+                        className="w-full py-2.5 px-4 rounded-xl bg-[#00F0FF] hover:bg-[#38f2ff] text-black font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-cyan-500/25 cursor-pointer group"
                       >
-                        <span>View Details & RSVP</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => navigate(`/clubs/${spotlightEvent.club?.id || spotlightEvent.clubId || 'campus'}/events/${spotlightEvent.id}`)}
-                        className={`p-2.5 rounded-xl border transition-colors cursor-pointer ${
-                          isDark ? 'bg-white/5 border-white/10 hover:bg-white/10 text-gray-300' : 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-700'
-                        }`}
-                        title="Open Dedicated Event Page"
-                      >
-                        <ExternalLink className="w-4 h-4" />
+                        <span>View Event Details & RSVP</span>
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </button>
                     </div>
 
@@ -382,7 +446,7 @@ const PublicHomePage = () => {
                           {nextUpEvents.map((nextEv) => (
                             <div
                               key={nextEv.id}
-                              onClick={() => setSelectedEvent(nextEv)}
+                              onClick={() => handleNavigateToEvent(nextEv)}
                               className={`flex items-center justify-between p-2 rounded-xl border cursor-pointer transition-all ${
                                 isDark
                                   ? 'bg-white/5 border-white/5 hover:border-cyan-500/40'
@@ -512,9 +576,10 @@ const PublicHomePage = () => {
                 return (
                   <div
                     key={event.id}
-                    className={`group relative rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col justify-between ${
+                    onClick={() => handleNavigateToEvent(event)}
+                    className={`group relative rounded-2xl overflow-hidden border transition-all duration-300 flex flex-col justify-between cursor-pointer ${
                       isDark
-                        ? 'bg-[#12141C] border-white/10 hover:border-cyan-500/40 hover:shadow-xl hover:shadow-cyan-500/5'
+                        ? 'bg-[#12141C] border-white/10 hover:border-cyan-500/50 hover:shadow-xl hover:shadow-cyan-500/10'
                         : 'bg-white border-slate-200 hover:border-cyan-400 shadow-xs hover:shadow-lg'
                     }`}
                   >
@@ -561,9 +626,8 @@ const PublicHomePage = () => {
                       <div>
                         {/* Event Title */}
                         <h3
-                          onClick={() => setSelectedEvent(event)}
-                          className={`font-['Syne',sans-serif] text-lg font-bold uppercase tracking-tight line-clamp-1 cursor-pointer transition-colors ${
-                            isDark ? 'text-white hover:text-cyan-400' : 'text-[#0F172A] hover:text-cyan-600'
+                          className={`font-['Syne',sans-serif] text-lg font-bold uppercase tracking-tight line-clamp-1 transition-colors ${
+                            isDark ? 'text-white group-hover:text-cyan-400' : 'text-[#0F172A] group-hover:text-cyan-600'
                           }`}
                           title={event.title}
                         >
@@ -591,29 +655,19 @@ const PublicHomePage = () => {
                         </p>
                       </div>
 
-                      {/* Action Bar */}
-                      <div className={`pt-3 border-t flex items-center justify-between gap-2 ${
+                      {/* Single Dominant Action Bar */}
+                      <div className={`pt-3 border-t ${
                         isDark ? 'border-white/10' : 'border-slate-100'
                       }`}>
                         <button
-                          onClick={() => setSelectedEvent(event)}
-                          className="flex-1 py-2 px-3 rounded-xl bg-[#00F0FF] hover:bg-[#38f2ff] text-black font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleNavigateToEvent(event);
+                          }}
+                          className="w-full py-2.5 px-3 rounded-xl bg-[#00F0FF] hover:bg-[#38f2ff] text-black font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-xs hover:shadow-cyan-500/20 cursor-pointer group/btn"
                         >
-                          <span>View Details & RSVP</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </button>
-
-                        <button
-                          onClick={() => navigate(`/clubs/${clubId}/events/${event.id}`)}
-                          className={`p-2 rounded-xl border transition-colors cursor-pointer ${
-                            isDark
-                              ? 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white'
-                              : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                          }`}
-                          title="Open Event Page"
-                          aria-label="Open Event Page"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5" />
+                          <span>View Event Details & RSVP</span>
+                          <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
                         </button>
                       </div>
                     </div>
