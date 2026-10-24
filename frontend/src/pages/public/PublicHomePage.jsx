@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { publicApi } from '../../api/publicApi';
 import { useTheme } from '../../context/ThemeContext';
 import PublicLayout from '../../components/public/PublicLayout';
@@ -24,6 +24,7 @@ import {
   CheckCircle2,
   Tag,
   ChevronRight,
+  ChevronLeft,
 } from 'lucide-react';
 
 const PublicHomePage = () => {
@@ -46,6 +47,28 @@ const PublicHomePage = () => {
   // Modals & Lightbox
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [activeGalleryEvent, setActiveGalleryEvent] = useState(null);
+
+  // Interactive Ticker State
+  const [tickerIndex, setTickerIndex] = useState(0);
+  const [isTickerPaused, setIsTickerPaused] = useState(false);
+
+  useEffect(() => {
+    if (!events || events.length <= 1 || isTickerPaused) return;
+    const interval = setInterval(() => {
+      setTickerIndex((prev) => (prev + 1) % events.length);
+    }, 4500); // Cycles every 4.5 seconds
+    return () => clearInterval(interval);
+  }, [events, isTickerPaused]);
+
+  const handleNextTicker = (e) => {
+    e.stopPropagation();
+    setTickerIndex((prev) => (prev + 1) % events.length);
+  };
+  
+  const handlePrevTicker = (e) => {
+    e.stopPropagation();
+    setTickerIndex((prev) => (prev - 1 + events.length) % events.length);
+  };
 
   const fetchUpcomingEvents = async () => {
     try {
@@ -155,68 +178,66 @@ const PublicHomePage = () => {
     navigate(`/clubs/${cId}/events/${ev.id}`);
   };
 
-  // Marquee list repeating items for continuous, infinite flow
-  const marqueeEvents = events.length > 0 ? [...events, ...events, ...events] : [];
+  // Seamless continuous ticker list - pad items so it always covers wide viewports, then duplicate for perfect -50% loop
+  const marqueeItems = React.useMemo(() => {
+    if (!events || events.length === 0) return [];
+    let base = [...events];
+    while (base.length < 8) {
+      base = [...base, ...events];
+    }
+    return [...base, ...base];
+  }, [events]);
 
   return (
     <PublicLayout>
 
-      {/* Real-time Campus Events Marquee Ticker */}
+      {/* 🔴 HIGH-SPEED CAMPUS DISPATCH TICKER */}
       {events.length > 0 && (
-        <div className={`relative border-b overflow-hidden flex items-center transition-colors select-none ${
-          isDark
-            ? 'bg-[#0E121E]/95 border-white/10 text-gray-200'
-            : 'bg-white border-slate-200/90 text-slate-800 shadow-2xs'
-        }`}>
-          {/* Pinned Left Indicator Badge */}
-          <div className={`shrink-0 z-20 flex items-center gap-2 px-3.5 sm:px-4 py-2 font-['Syne',sans-serif] font-black text-[11px] sm:text-xs uppercase tracking-wider border-r ${
+        <div
+          className={`relative w-full border-b overflow-hidden flex items-center transition-colors h-12 ${
             isDark
-              ? 'bg-[#0E121E] border-white/10 text-[#00F0FF]'
-              : 'bg-slate-50 border-slate-200 text-cyan-700'
-          }`}>
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
-            </span>
-            <span className="whitespace-nowrap flex items-center gap-1.5">
-              <span>NEW EVENTS</span>
-            </span>
-          </div>
+              ? 'bg-[#0B0C10] border-white/10'
+              : 'bg-slate-900 border-slate-800'
+          }`}
+        >
 
-          {/* Marquee Track with Hover Pause */}
-          <div className="relative overflow-hidden flex-1 py-1.5 flex items-center">
-            {/* Gradient Edge Masks */}
-            <div className={`pointer-events-none absolute left-0 top-0 bottom-0 w-8 z-10 ${
-              isDark ? 'bg-gradient-to-r from-[#0E121E] to-transparent' : 'bg-gradient-to-r from-white to-transparent'
-            }`} />
-            <div className={`pointer-events-none absolute right-0 top-0 bottom-0 w-12 z-10 ${
-              isDark ? 'bg-gradient-to-l from-[#0E121E] to-transparent' : 'bg-gradient-to-l from-white to-transparent'
-            }`} />
-
-            <div className="animate-marquee flex items-center">
-              {marqueeEvents.map((ev, idx) => {
+          {/* Marquee Track with CSS Gradient Edge Masks for smooth fade-ins */}
+          <div className="flex-1 h-full overflow-hidden relative flex items-center">
+            
+            {/* 
+              The scrolling track. 
+              Adjust '20s' lower (e.g., '12s') to make it even faster.
+            */}
+            <div className="flex w-max items-center animate-scroll-x hover:[animation-play-state:paused]">
+              
+              {/* Duplicate the array heavily to ensure it spans ultra-wide monitors and loops perfectly */}
+              {[...events, ...events, ...events, ...events].map((ev, idx) => {
                 const dateParts = formatDateParts(ev.startAt);
                 return (
                   <button
                     key={`${ev.id}-${idx}`}
                     onClick={() => handleNavigateToEvent(ev)}
-                    className={`inline-flex items-center gap-2.5 px-3 py-1 rounded-full text-xs font-medium transition-all cursor-pointer group whitespace-nowrap mx-1.5 border ${
-                      isDark
-                        ? 'bg-white/5 hover:bg-cyan-500/10 border-white/10 hover:border-cyan-500/40 text-gray-200 hover:text-white'
-                        : 'bg-slate-50 hover:bg-cyan-50 border-slate-200 hover:border-cyan-300 text-slate-700 hover:text-slate-900 shadow-2xs'
-                    }`}
-                    title="Click to open dedicated event page"
+                    className="inline-flex items-center gap-3 px-5 py-1.5 group cursor-pointer transition-all hover:bg-white/10 rounded-xl mx-1.5 shrink-0 text-left border border-transparent hover:border-white/10"
                   >
-                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
-                      <Sparkles className="w-2.5 h-2.5" />
-                      <span>{ev.club?.name || 'Club'}</span>
+                    {/* Club Tag */}
+                    <span className="font-mono text-[11px] font-black uppercase tracking-widest text-cyan-400 group-hover:text-cyan-300 transition-colors">
+                      {ev.club?.name || 'CAMPUS'}
                     </span>
-                    <span className="font-semibold text-xs">{ev.title}</span>
-                    <span className="text-[11px] opacity-75 flex items-center gap-1">
-                      <Calendar className="w-3 h-3 text-cyan-500" />
+
+                    <span className="text-white/20 text-xs font-light">/</span>
+
+                    {/* Event Title */}
+                    <span className="font-semibold text-slate-200 group-hover:text-white transition-colors text-sm whitespace-nowrap">
+                      {ev.title}
+                    </span>
+
+                    {/* Event Date Badge */}
+                    <span className="text-[10px] font-mono text-slate-300 group-hover:text-white transition-colors bg-white/10 px-2 py-0.5 rounded-md border border-white/10 flex items-center gap-1.5 ml-1">
+                      <Calendar className="w-3 h-3 opacity-60" />
                       {dateParts.month} {dateParts.day}
                     </span>
-                    <ArrowUpRight className="w-3 h-3 opacity-40 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    
+                    <ArrowUpRight className="w-3.5 h-3.5 text-cyan-500 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all" />
                   </button>
                 );
               })}
@@ -226,7 +247,7 @@ const PublicHomePage = () => {
       )}
 
       {/* 1. STUDENT-FOCUSED HERO SECTION (Information first, sleek search, compact spotlight) */}
-      <section className={`relative pt-10 pb-12 md:pt-16 md:pb-16 flex items-center overflow-hidden transition-colors duration-300 ${
+      <section className={`relative pt-10 pb-4 md:pt-8 md:pb-4 flex items-center overflow-hidden transition-colors duration-300 ${
         isDark ? 'bg-[#0B0C10]' : 'bg-[#FAF9F5]'
       }`}>
         {/* Subtle Ambient Glow */}
@@ -246,25 +267,13 @@ const PublicHomePage = () => {
               transition={{ duration: 0.5 }}
               className="lg:col-span-7 flex flex-col justify-center"
             >
-              <div className={`inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider backdrop-blur-md self-start mb-4 border transition-colors ${
-                isDark
-                  ? 'bg-white/5 border-white/10 text-gray-300'
-                  : 'bg-white/90 border-slate-200 text-slate-700 shadow-2xs'
-              }`}>
-                <span className="flex h-2 w-2 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00F0FF] opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00F0FF]"></span>
-                </span>
-                <span className="text-cyan-600 dark:text-[#00F0FF] font-bold">Fall 2026 Campus Live Board</span>
-                <span className={isDark ? 'text-gray-500' : 'text-slate-400'}>•</span>
-                <span className={isDark ? 'text-gray-400' : 'text-slate-500'}>Student Events Hub</span>
-              </div>
+              
 
-              <h1 className={`font-['Syne',sans-serif] text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[0.96] uppercase mb-4 ${
+              <h1 className={`font-['Poppins'] text-5xl sm:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[0.96] uppercase mb-4 ${
                 isDark ? 'text-white' : 'text-[#0F172A]'
               }`}>
                 HEARD ABOUT AN EVENT? <br />
-                <span className={`text-transparent bg-clip-text ${
+                <span className={`text-transparent italic font-light bg-clip-text ${
                   isDark
                     ? 'bg-gradient-to-r from-[#00F0FF] via-cyan-200 to-white'
                     : 'bg-gradient-to-r from-cyan-600 via-teal-600 to-[#0F172A]'

@@ -179,19 +179,24 @@ export const EventHero = ({ event, children, className = '' }) => {
           )}
 
           {/* External Redirect / Registration Link */}
-          {(event.registrationUrl || event.url || event.externalUrl || event.link) && (
-            <div className="pt-2">
-              <a
-                href={event.registrationUrl || event.url || event.externalUrl || event.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-purple-500/25 transition-all hover:scale-[1.03] active:scale-[0.97]"
-              >
-                <ExternalLink className="w-4 h-4" />
-                <span>Register / Open Link</span>
-              </a>
-            </div>
-          )}
+          {(() => {
+            const rawUrl = event.registrationUrl || event.url || event.externalUrl || event.link;
+            const validUrl = rawUrl ? (/^https?:\/\//i.test(String(rawUrl).trim()) ? String(rawUrl).trim() : `https://${String(rawUrl).trim()}`) : null;
+            if (!validUrl) return null;
+            return (
+              <div className="pt-2">
+                <a
+                  href={validUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-purple-500/25 transition-all hover:scale-[1.03] active:scale-[0.97]"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span>Register for Event</span>
+                </a>
+              </div>
+            );
+          })()}
         </div>
 
       </div>

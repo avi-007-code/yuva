@@ -125,10 +125,21 @@ const PublicEventDetailPage = () => {
   const dateInfo = formatDateParts(event?.startAt || event?.startDate || event?.date);
   const eventTime = formatEventTime(event?.startAt || event?.startDate || event?.date, event?.endAt || event?.endDate);
 
+  // Normalize registration URL ensuring protocol
+  const getValidUrl = (url) => {
+    if (!url) return '';
+    const trimmed = String(url).trim();
+    if (!trimmed) return '';
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+    return `https://${trimmed}`;
+  };
+
+  const rawRegistrationUrl = event?.registrationUrl || event?.url || event?.formUrl || event?.link || event?.externalUrl;
+  const validRegistrationUrl = getValidUrl(rawRegistrationUrl);
+
   const handleRegister = () => {
-    if (event?.registrationUrl) {
-      window.open(event.registrationUrl, '_blank', 'noopener,noreferrer');
-      setRegistered(true);
+    if (validRegistrationUrl) {
+      window.open(validRegistrationUrl, '_blank', 'noopener,noreferrer');
       return;
     }
     setRegistered(true);
@@ -299,40 +310,62 @@ const PublicEventDetailPage = () => {
                   </div>
 
                   {/* Action CTA Buttons */}
-                  <div className="pt-2 flex flex-wrap items-center gap-3">
-                    <button
-                      onClick={handleRegister}
-                      disabled={registered}
-                      className={`flex-1 min-w-[200px] py-3.5 px-6 rounded-full font-extrabold text-xs uppercase tracking-wider shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                        registered
-                          ? 'bg-emerald-500 text-black cursor-default'
-                          : 'bg-[#00F0FF] hover:bg-[#38f2ff] text-black shadow-cyan-500/30'
-                      }`}
-                    >
-                      {registered ? (
-                        <>
-                          <CheckCircle2 className="w-4 h-4" />
-                          <span>RSVP Confirmed</span>
-                        </>
+                  <div className="pt-2 flex flex-col gap-2.5">
+                    <div className="flex flex-wrap items-center gap-3">
+                      {validRegistrationUrl ? (
+                        <a
+                          href={validRegistrationUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 min-w-[200px] py-3.5 px-6 rounded-full font-extrabold text-xs uppercase tracking-wider shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer bg-[#00F0FF] hover:bg-[#38f2ff] text-black shadow-cyan-500/30 hover:scale-[1.01] active:scale-[0.99]"
+                          title="Open official registration form"
+                        >
+                          <span>Register for Event</span>
+                          <ExternalLink className="w-4 h-4 shrink-0" />
+                        </a>
                       ) : (
-                        <>
-                          <span>{event.registrationUrl ? 'Open Registration Link' : 'RSVP / Register Now'}</span>
-                          {event.registrationUrl ? <ExternalLink className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
-                        </>
+                        <button
+                          onClick={handleRegister}
+                          disabled={registered}
+                          className={`flex-1 min-w-[200px] py-3.5 px-6 rounded-full font-extrabold text-xs uppercase tracking-wider shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                            registered
+                              ? 'bg-emerald-500 text-black cursor-default'
+                              : 'bg-[#00F0FF] hover:bg-[#38f2ff] text-black shadow-cyan-500/30'
+                          }`}
+                        >
+                          {registered ? (
+                            <>
+                              <CheckCircle2 className="w-4 h-4" />
+                              <span>RSVP Confirmed</span>
+                            </>
+                          ) : (
+                            <>
+                              <span>RSVP / Register Now</span>
+                              <ArrowRight className="w-4 h-4" />
+                            </>
+                          )}
+                        </button>
                       )}
-                    </button>
 
-                    {/* Share Button */}
-                    <button
-                      onClick={handleShare}
-                      className={`p-3.5 rounded-full border transition cursor-pointer ${
-                        isDark ? 'bg-white/5 border-white/10 hover:bg-white/10 text-gray-300' : 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-700'
-                      }`}
-                      title="Share Event Link"
-                      aria-label="Share Event Link"
-                    >
-                      <Share2 className="w-4 h-4" />
-                    </button>
+                      {/* Share Button */}
+                      <button
+                        onClick={handleShare}
+                        className={`p-3.5 rounded-full border transition cursor-pointer ${
+                          isDark ? 'bg-white/5 border-white/10 hover:bg-white/10 text-gray-300' : 'bg-slate-50 border-slate-200 hover:bg-slate-100 text-slate-700'
+                        }`}
+                        title="Share Event Link"
+                        aria-label="Share Event Link"
+                      >
+                        <Share2 className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {validRegistrationUrl && (
+                      <p className="text-[11px] text-cyan-600 dark:text-cyan-400 font-medium flex items-center gap-1.5">
+                        <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                        <span>Redirects to official Google Form / Registration Page</span>
+                      </p>
+                    )}
                   </div>
 
                   {/* Registration Count Note */}

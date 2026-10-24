@@ -390,7 +390,7 @@ const ManagerEventDetailPage = () => {
                 <div>
                   <label className="block text-xs font-extrabold text-[#0F172A] uppercase tracking-wider mb-1 flex items-center gap-1.5">
                     <ExternalLink className="w-3.5 h-3.5 text-[#2563EB]" />
-                    <span>Registration / Redirect URL (Optional)</span>
+                    <span>Registration / Redirect URL *</span>
                   </label>
                   <input
                     type="url"
@@ -398,6 +398,7 @@ const ManagerEventDetailPage = () => {
                     onChange={(e) => setRegistrationUrl(e.target.value)}
                     placeholder="e.g. https://forms.google.com/your-form or https://eventbrite.com/..."
                     className="w-full px-4 py-2.5 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl text-[#0F172A] text-xs font-medium focus:outline-none focus:border-[#FF5733]"
+                    required
                   />
                 </div>
 

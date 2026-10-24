@@ -157,40 +157,46 @@ const EventModal = ({ event, club, onClose, onOpenGallery }) => {
           </div>
 
           {/* Action buttons: Registration / Redirect Link & Gallery */}
-          {((event.registrationUrl || event.url || event.externalUrl || event.link) || hasGallery) && (
-            <div className={`pt-3 flex flex-wrap items-center justify-between gap-3 border-t ${
-              isDark ? 'border-slate-800/80' : 'border-slate-200'
-            }`}>
-              {(event.registrationUrl || event.url || event.externalUrl || event.link) ? (
-                <a
-                  href={event.registrationUrl || event.url || event.externalUrl || event.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-purple-500/25 transition-all hover:scale-[1.02]"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  <span>Register / Open Link</span>
-                </a>
-              ) : <div />}
+          {((event.registrationUrl || event.url || event.externalUrl || event.link) || hasGallery) && (() => {
+            const rawUrl = event.registrationUrl || event.url || event.externalUrl || event.link;
+            const validUrl = rawUrl ? (/^https?:\/\//i.test(String(rawUrl).trim()) ? String(rawUrl).trim() : `https://${String(rawUrl).trim()}`) : null;
 
-              {hasGallery && (
-                <button
-                  onClick={() => {
-                    onClose();
-                    if (onOpenGallery) onOpenGallery(event);
-                  }}
-                  className={`inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition border ${
-                    isDark
-                      ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
-                      : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300'
-                  }`}
-                >
-                  <ImageIcon className="w-4 h-4 text-purple-500 dark:text-purple-400" />
-                  <span>Gallery ({event.gallery.length})</span>
-                </button>
-              )}
-            </div>
-          )}
+            return (
+              <div className={`pt-3 flex flex-wrap items-center justify-between gap-3 border-t ${
+                isDark ? 'border-slate-800/80' : 'border-slate-200'
+              }`}>
+                {validUrl ? (
+                  <a
+                    href={validUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-purple-500/25 transition-all hover:scale-[1.02]"
+                    title="Open registration form"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    <span>Register for Event</span>
+                  </a>
+                ) : <div />}
+
+                {hasGallery && (
+                  <button
+                    onClick={() => {
+                      onClose();
+                      if (onOpenGallery) onOpenGallery(event);
+                    }}
+                    className={`inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition border ${
+                      isDark
+                        ? 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
+                        : 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300'
+                    }`}
+                  >
+                    <ImageIcon className="w-4 h-4 text-purple-500 dark:text-purple-400" />
+                    <span>Gallery ({event.gallery.length})</span>
+                  </button>
+                )}
+              </div>
+            );
+          })()}
         </div>
       </div>
     </div>

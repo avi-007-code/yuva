@@ -4,7 +4,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-serif: "Google Sans", serif;
+  --font-serif: "Inter", serif;
   --font-sans: "Google Sans", system-ui, -apple-system, sans-serif;
   --font-display: "Google Sans", sans-serif;
 }
@@ -50,10 +50,25 @@ input[type="datetime-local"] {
 .animate-marquee {
   display: flex;
   width: max-content;
-  animation: marquee 35s linear infinite;
+  animation: marquee 45s linear infinite;
   will-change: transform;
 }
 
 .animate-marquee:hover {
   animation-play-state: paused;
+}
+
+@keyframes scroll-x {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* Moves exactly half the width of the duplicated content for a seamless loop */
+    transform: translateX(-50%); 
+  }
+}
+
+.animate-scroll-x {
+  /* Change 20s to 15s or 10s if you want it to fly even faster */
+  animation: scroll-x 20s linear infinite;
 }

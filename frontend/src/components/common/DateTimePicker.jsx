@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { Calendar, Clock, Sparkles } from 'lucide-react';
+import { useTheme } from '../../context/ThemeContext';
 
 /**
  * Enhanced Date & Time Picker Component
@@ -15,6 +16,7 @@ export const DateTimePicker = ({
   disabled = false,
   className = '',
 }) => {
+  const { isDark } = useTheme();
   const inputRef = useRef(null);
 
   // Format current datetime string (YYYY-MM-DDTHH:mm) for human-readable preview
@@ -69,8 +71,8 @@ export const DateTimePicker = ({
   return (
     <div className={`space-y-1.5 ${className}`}>
       {label && (
-        <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
-          {label} {required && <span className="text-purple-400">*</span>}
+        <label className={`block text-xs font-semibold uppercase tracking-wider ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+          {label} {required && <span className="text-purple-500">*</span>}
         </label>
       )}
 
@@ -86,9 +88,13 @@ export const DateTimePicker = ({
             max={max ? max.split('T')[0] : undefined}
             required={required}
             disabled={disabled}
-            className="w-full pl-10 pr-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500 transition shadow-inner [color-scheme:dark]"
+            className={`w-full pl-10 pr-3 py-2.5 rounded-xl text-sm border focus:outline-none transition shadow-inner ${
+              isDark
+                ? 'bg-slate-950 border-slate-800 text-white focus:border-purple-500 [color-scheme:dark]'
+                : 'bg-white border-slate-300 text-slate-900 focus:border-purple-600 [color-scheme:light]'
+            }`}
           />
-          <Calendar className="w-4 h-4 text-purple-400 absolute left-3.5 pointer-events-none" />
+          <Calendar className={`w-4 h-4 absolute left-3.5 pointer-events-none ${isDark ? 'text-purple-400' : 'text-purple-600'}`} />
         </div>
 
         {/* Time Selector with Clock Icon */}
@@ -99,9 +105,13 @@ export const DateTimePicker = ({
             onChange={(e) => handleTimeChange(e.target.value)}
             required={required}
             disabled={disabled}
-            className="w-full pl-10 pr-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white text-sm focus:outline-none focus:border-purple-500 transition shadow-inner [color-scheme:dark]"
+            className={`w-full pl-10 pr-3 py-2.5 rounded-xl text-sm border focus:outline-none transition shadow-inner ${
+              isDark
+                ? 'bg-slate-950 border-slate-800 text-white focus:border-purple-500 [color-scheme:dark]'
+                : 'bg-white border-slate-300 text-slate-900 focus:border-purple-600 [color-scheme:light]'
+            }`}
           />
-          <Clock className="w-4 h-4 text-indigo-400 absolute left-3.5 pointer-events-none" />
+          <Clock className={`w-4 h-4 absolute left-3.5 pointer-events-none ${isDark ? 'text-indigo-400' : 'text-indigo-600'}`} />
         </div>
       </div>
 
@@ -118,7 +128,7 @@ export const DateTimePicker = ({
       <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
         {/* Quick Presets */}
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-[10px] text-slate-500 font-medium">Quick Time:</span>
+          <span className={`text-[10px] font-medium ${isDark ? 'text-slate-500' : 'text-slate-600'}`}>Quick Time:</span>
           {timePresets.map((preset) => (
             <button
               key={preset.value}
@@ -127,8 +137,12 @@ export const DateTimePicker = ({
               disabled={disabled}
               className={`px-2 py-0.5 text-[11px] rounded-lg border font-medium transition cursor-pointer ${
                 timePart === preset.value
-                  ? 'bg-purple-500/20 text-purple-300 border-purple-500/40'
-                  : 'bg-slate-900 hover:bg-slate-800 text-slate-400 border-slate-800'
+                  ? isDark
+                    ? 'bg-purple-500/20 text-purple-300 border-purple-500/40'
+                    : 'bg-purple-50 text-purple-700 border-purple-300 font-semibold'
+                  : isDark
+                    ? 'bg-slate-900 hover:bg-slate-800 text-slate-400 border-slate-800'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
               }`}
             >
               {preset.label}
@@ -138,8 +152,12 @@ export const DateTimePicker = ({
 
         {/* Selected Date & Time Preview Badge */}
         {formattedPreview && (
-          <div className="inline-flex items-center gap-1 text-xs text-purple-300 font-medium bg-purple-500/10 px-2.5 py-0.5 rounded-lg border border-purple-500/20">
-            <Sparkles className="w-3 h-3 text-pink-400" />
+          <div className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-0.5 rounded-lg border ${
+            isDark
+              ? 'text-purple-300 bg-purple-500/10 border-purple-500/20'
+              : 'text-purple-700 bg-purple-50 border-purple-200 font-semibold'
+          }`}>
+            <Sparkles className={`w-3 h-3 ${isDark ? 'text-pink-400' : 'text-pink-600'}`} />
             <span>{formattedPreview}</span>
           </div>
         )}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { managerApi } from '../../api/managerApi';
@@ -68,6 +68,21 @@ const ManagerClubDetailPage = () => {
   const [clubDescription, setClubDescription] = useState('');
   const [updatingClub, setUpdatingClub] = useState(false);
   const [clubFormError, setClubFormError] = useState('');
+
+  const editFormRef = useRef(null);
+  const clubNameInputRef = useRef(null);
+
+  const handleToggleEditInfo = () => {
+    if (!isEditingInfo) {
+      setIsEditingInfo(true);
+      setTimeout(() => {
+        editFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        clubNameInputRef.current?.focus({ preventScroll: true });
+      }, 60);
+    } else {
+      setIsEditingInfo(false);
+    }
+  };
 
   // Logo upload/delete state
   const [logoUploading, setLogoUploading] = useState(false);
@@ -431,7 +446,7 @@ const ManagerClubDetailPage = () => {
             <ClubHeader club={club}>
               <div className="flex flex-wrap items-center gap-3">
                 <button
-                  onClick={() => setIsEditingInfo(!isEditingInfo)}
+                  onClick={handleToggleEditInfo}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-[#FAF9F5] hover:bg-[#F0EEE6] text-[#0F172A] text-xs font-extrabold uppercase tracking-wider rounded-full border border-[#E2E0D5] transition"
                 >
                   <Edit3 className="w-4 h-4 text-[#FF5733]" />
@@ -534,7 +549,11 @@ const ManagerClubDetailPage = () => {
 
               {/* Collapsible Edit Info Form */}
               {isEditingInfo && (
-                <form onSubmit={handleUpdateClubInfo} className="p-5 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl space-y-4">
+                <form
+                  ref={editFormRef}
+                  onSubmit={handleUpdateClubInfo}
+                  className="scroll-mt-24 p-5 bg-[#FAF9F5] border border-[#E2E0D5] rounded-2xl space-y-4"
+                >
                   <h3 className="font-['Syne',sans-serif] text-base font-black text-[#0F172A] uppercase">
                     Edit Club Information
                   </h3>
@@ -551,6 +570,7 @@ const ManagerClubDetailPage = () => {
                       Club Name *
                     </label>
                     <input
+                      ref={clubNameInputRef}
                       type="text"
                       value={clubName}
                       onChange={(e) => setClubName(e.target.value)}
@@ -865,7 +885,7 @@ const ManagerClubDetailPage = () => {
             <div>
               <label className={`block text-xs font-semibold uppercase tracking-wider mb-1 flex items-center gap-1.5 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
                 <ExternalLink className="w-3.5 h-3.5 text-purple-400" />
-                <span>Registration URL (Optional)</span>
+                <span>Registration URL *</span>
               </label>
               <input
                 type="url"
@@ -877,6 +897,7 @@ const ManagerClubDetailPage = () => {
                     ? 'bg-slate-950 border-slate-800 text-white focus:border-purple-500'
                     : 'bg-slate-50 border-slate-200 text-slate-900 focus:border-purple-600'
                 }`}
+                required
               />
             </div>
 
