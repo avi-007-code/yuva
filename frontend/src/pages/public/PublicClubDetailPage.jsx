@@ -1,35 +1,34 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { publicApi } from '../../api/publicApi';
 import PublicLayout from '../../components/public/PublicLayout';
-import EventModal from '../../components/public/EventModal';
 import GalleryLightbox from '../../components/public/GalleryLightbox';
 import { useTheme } from '../../context/ThemeContext';
 import { getCloudinaryUrl, CLOUDINARY_TRANSFORMS } from '../../utils/cloudinary';
 import { getClubCoverImage } from '../../utils/clubCovers';
 import {
   ArrowLeft,
-  Building2,
-  Calendar,
-  History,
-  MapPin,
-  Sparkles,
   AlertCircle,
-  RefreshCw,
-  Image as ImageIcon,
-  Clock,
-  Users,
-  ArrowRight,
-  ShieldCheck,
-  Mail,
 } from 'lucide-react';
+
+const DEFAULT_CLUB_IMAGE =
+  'https://images.unsplash.com/photo-1531403009284-440f080d1e12?q=80&w=200&auto=format&fit=crop';
 
 const formatDateParts = (dateString) => {
   if (!dateString) return { day: 'TBA', month: 'TBA' };
+
   const dateObj = new Date(dateString);
-  if (isNaN(dateObj.getTime())) return { day: 'TBA', month: 'TBA' };
+
+  if (isNaN(dateObj.getTime())) {
+    return { day: 'TBA', month: 'TBA' };
+  }
+
   const day = dateObj.getDate().toString().padStart(2, '0');
-  const month = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+  const month = dateObj
+    .toLocaleString('en-US', { month: 'short' })
+    .toUpperCase();
+
   return { day, month };
 };
 
@@ -50,15 +49,21 @@ const PublicClubDetailPage = () => {
   const [pastLoading, setPastLoading] = useState(true);
   const [pastError, setPastError] = useState(null);
 
-  const [selectedEventModal, setSelectedEventModal] = useState(null);
   const [activeGalleryEvent, setActiveGalleryEvent] = useState(null);
 
+  // Fetch club information
   const fetchClubInfo = async () => {
     try {
       setClubLoading(true);
       setClubError(null);
+
       const res = await publicApi.getClubById(clubId);
-      const clubData = res.data?.club || res.club || (res.id ? res : null);
+
+      const clubData =
+        res.data?.club ||
+        res.club ||
+        (res.id ? res : null);
+
       if (clubData) {
         setClub(clubData);
       } else {
@@ -66,56 +71,79 @@ const PublicClubDetailPage = () => {
       }
     } catch (err) {
       console.error('Error loading club:', err);
-      setClubError(err.response?.data?.message || err.message || 'Failed to load club details.');
+
+      setClubError(
+        err.response?.data?.message ||
+        err.message ||
+        'Failed to load club details.'
+      );
     } finally {
       setClubLoading(false);
     }
   };
 
+  // Fetch upcoming events
   const fetchUpcomingEvents = async () => {
     try {
       setUpcomingLoading(true);
       setUpcomingError(null);
+
       const res = await publicApi.getClubUpcomingEvents(clubId);
+
       const eventList =
         res.data?.events ||
         res.events ||
         (Array.isArray(res.data) ? res.data : Array.isArray(res) ? res : []);
+
       setUpcomingEvents(eventList);
     } catch (err) {
       console.error('Error loading upcoming events:', err);
-      setUpcomingError(err.response?.data?.message || err.message || 'Failed to load upcoming events.');
+
+      setUpcomingError(
+        err.response?.data?.message ||
+        err.message ||
+        'Failed to load upcoming events.'
+      );
     } finally {
       setUpcomingLoading(false);
     }
   };
 
+  // Fetch past events
   const fetchPastEvents = async () => {
     try {
       setPastLoading(true);
       setPastError(null);
+
       const res = await publicApi.getClubPastEvents(clubId);
+
       const eventList =
         res.data?.events ||
         res.events ||
         (Array.isArray(res.data) ? res.data : Array.isArray(res) ? res : []);
+
       setPastEvents(eventList);
     } catch (err) {
       console.error('Error loading past events:', err);
-      setPastError(err.response?.data?.message || err.message || 'Failed to load past events.');
+
+      setPastError(
+        err.response?.data?.message ||
+        err.message ||
+        'Failed to load past events.'
+      );
     } finally {
       setPastLoading(false);
     }
   };
 
+  // Update page title
   useEffect(() => {
-    if (club?.name) {
-      document.title = `${club.name} | 4 THE PEOPLE`;
-    } else {
-      document.title = 'Club Details | 4 THE PEOPLE';
-    }
+    document.title = club?.name
+      ? `${club.name} | 4 THE PEOPLE`
+      : 'Club Details | 4 THE PEOPLE';
   }, [club]);
 
+  // Load page data
   useEffect(() => {
     if (clubId) {
       fetchClubInfo();
@@ -123,6 +151,18 @@ const PublicClubDetailPage = () => {
       fetchPastEvents();
     }
   }, [clubId]);
+
+  // Prepare club images
+  const logoUrl = club
+    ? getCloudinaryUrl(
+        club.logo?.url || club.logoUrl,
+        CLOUDINARY_TRANSFORMS.LOGO
+      )
+    : null;
+
+  const coverUrl = club
+    ? getClubCoverImage(club)
+    : null;
 
   return (
     <PublicLayout>
@@ -143,14 +183,23 @@ const PublicClubDetailPage = () => {
 
         {/* Club Profile Hero Section */}
         {clubLoading ? (
-          <div className={`h-64 rounded-3xl animate-pulse border ${
-            isDark ? 'bg-white/5 border-white/5' : 'bg-slate-100 border-slate-200'
-          }`} />
+          <div
+            className={`h-64 rounded-3xl animate-pulse border ${
+              isDark
+                ? 'bg-white/5 border-white/5'
+                : 'bg-slate-100 border-slate-200'
+            }`}
+          />
         ) : clubError ? (
           <div className="p-8 bg-red-500/10 border border-red-500/20 rounded-3xl text-center space-y-4">
             <AlertCircle className="w-10 h-10 text-red-400 mx-auto" />
-            <h2 className="text-xl font-extrabold text-white font-['Syne',sans-serif]">Club Not Found</h2>
+
+            <h2 className="text-xl font-extrabold text-white font-['Syne',sans-serif]">
+              Club Not Found
+            </h2>
+
             <p className="text-sm text-red-300">{clubError}</p>
+
             <button
               onClick={fetchClubInfo}
               className="px-5 py-2.5 bg-red-500/20 text-red-200 rounded-full text-xs font-bold uppercase"
@@ -159,63 +208,100 @@ const PublicClubDetailPage = () => {
             </button>
           </div>
         ) : club ? (
-          <div className={`rounded-3xl border overflow-hidden transition-colors ${
-            isDark
-              ? 'bg-[#12141C] border-white/10 shadow-2xl'
-              : 'bg-white border-slate-200 shadow-md'
-          }`}>
+          <div
+            className={`rounded-3xl border overflow-hidden transition-colors ${
+              isDark
+                ? 'bg-[#12141C] border-white/10 shadow-2xl'
+                : 'bg-white border-slate-200 shadow-md'
+            }`}
+          >
+            {/* Cover Image */}
             <div className="relative h-36 sm:h-44 bg-gray-900 overflow-hidden">
               <img
-                src={getClubCoverImage(club)}
-                alt={club.name}
+                src={coverUrl || DEFAULT_CLUB_IMAGE}
+                alt={`${club.name} cover`}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = DEFAULT_CLUB_IMAGE;
+                }}
               />
-              <div className={`absolute inset-0 ${
-                isDark ? 'bg-gradient-to-t from-[#12141C] via-black/30 to-transparent' : 'bg-gradient-to-t from-white/90 via-black/20 to-transparent'
-              }`} />
 
+              <div
+                className={`absolute inset-0 ${
+                  isDark
+                    ? 'bg-gradient-to-t from-[#12141C] via-black/30 to-transparent'
+                    : 'bg-gradient-to-t from-white/90 via-black/20 to-transparent'
+                }`}
+              />
+
+              {/* Category Badge */}
               <div className="absolute top-4 right-4">
                 <span className="px-3.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/15 text-[10px] font-extrabold uppercase tracking-widest text-[#00F0FF]">
-                  {club.category || "CAMPUS ORGANIZATION"}
+                  {club.category || 'CAMPUS ORGANIZATION'}
                 </span>
               </div>
             </div>
 
+            {/* Club Information */}
             <div className="p-6 sm:p-10 pt-0 relative">
               <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 -mt-12 sm:-mt-16 mb-6">
+
                 <div className="flex items-end gap-4">
-                  <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-3xl overflow-hidden border-4 shadow-xl bg-gray-900 shrink-0 ${
-                    isDark ? 'border-[#12141C]' : 'border-white'
-                  }`}>
+
+                  {/* Club Logo */}
+                  <div
+                    className={`w-24 h-24 sm:w-28 sm:h-28 rounded-3xl overflow-hidden border-4 shadow-xl bg-gray-900 shrink-0 ${
+                      isDark ? 'border-[#12141C]' : 'border-white'
+                    }`}
+                  >
                     <img
-                      src={club.logoUrl || club.coverImage || "https://images.unsplash.com/photo-1531403009284-440f080d1e12?q=80&w=200&auto=format&fit=crop"}
-                      alt={club.name}
+                      src={logoUrl || DEFAULT_CLUB_IMAGE}
+                      alt={`${club.name} logo`}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = DEFAULT_CLUB_IMAGE;
+                      }}
                     />
                   </div>
+
+                  {/* Club Name */}
                   <div>
-                    <span className="text-[10px] font-black uppercase text-[#00F0FF] tracking-widest">{club.category}</span>
-                    <h1 className={`font-['Syne',sans-serif] text-3xl sm:text-4xl font-extrabold uppercase tracking-tight ${
-                      isDark ? 'text-white' : 'text-[#0F172A]'
-                    }`}>
+                    <span className="text-[10px] font-black uppercase text-[#00F0FF] tracking-widest">
+                      {club.category || 'CAMPUS ORGANIZATION'}
+                    </span>
+
+                    <h1
+                      className={`font-['Syne',sans-serif] text-3xl sm:text-4xl font-extrabold uppercase tracking-tight ${
+                        isDark ? 'text-white' : 'text-[#0F172A]'
+                      }`}
+                    >
                       {club.name}
                     </h1>
                   </div>
                 </div>
 
+                {/* Member Count */}
                 <div className="flex items-center gap-3">
-                  <span className={`px-4 py-2 rounded-full border text-xs font-bold ${
-                    isDark ? 'bg-white/5 border-white/10 text-gray-300' : 'bg-slate-100 border-slate-200 text-slate-700'
-                  }`}>
+                  <span
+                    className={`px-4 py-2 rounded-full border text-xs font-bold ${
+                      isDark
+                        ? 'bg-white/5 border-white/10 text-gray-300'
+                        : 'bg-slate-100 border-slate-200 text-slate-700'
+                    }`}
+                  >
                     {club._count?.members || club.membersCount || 100}+ Members
                   </span>
                 </div>
               </div>
 
-              <p className={`text-sm leading-relaxed max-w-4xl font-normal ${
-                isDark ? 'text-gray-300' : 'text-slate-600'
-              }`}>
-                {club.description || "Active student organization committed to fostering skills, projects, and collaboration across campus."}
+              {/* Club Description */}
+              <p
+                className={`text-sm leading-relaxed max-w-4xl font-normal ${
+                  isDark ? 'text-gray-300' : 'text-slate-600'
+                }`}
+              >
+                {club.description ||
+                  'Active student organization committed to fostering skills, projects, and collaboration across campus.'}
               </p>
             </div>
           </div>
@@ -223,33 +309,55 @@ const PublicClubDetailPage = () => {
 
         {/* Upcoming Events Section */}
         <section className="space-y-6">
-          <div className={`flex items-center justify-between border-b pb-4 ${
-            isDark ? 'border-white/10' : 'border-slate-200'
-          }`}>
+          <div
+            className={`flex items-center justify-between border-b pb-4 ${
+              isDark ? 'border-white/10' : 'border-slate-200'
+            }`}
+          >
             <div>
-              <span className="text-xs font-extrabold uppercase text-[#00F0FF]">Live Schedule</span>
-              <h2 className={`font-['Syne',sans-serif] text-2xl font-extrabold uppercase ${
-                isDark ? 'text-white' : 'text-[#0F172A]'
-              }`}>
+              <span className="text-xs font-extrabold uppercase text-[#00F0FF]">
+                Live Schedule
+              </span>
+
+              <h2
+                className={`font-['Syne',sans-serif] text-2xl font-extrabold uppercase ${
+                  isDark ? 'text-white' : 'text-[#0F172A]'
+                }`}
+              >
                 Upcoming <span className="text-[#00F0FF]">Events</span>
               </h2>
             </div>
           </div>
 
           {upcomingLoading ? (
-            <div className={`text-center py-12 text-sm ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>Loading upcoming events...</div>
+            <div
+              className={`text-center py-12 text-sm ${
+                isDark ? 'text-gray-400' : 'text-slate-500'
+              }`}
+            >
+              Loading upcoming events...
+            </div>
           ) : upcomingError ? (
-            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm">{upcomingError}</div>
+            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm">
+              {upcomingError}
+            </div>
           ) : upcomingEvents.length === 0 ? (
-            <div className={`text-center py-12 rounded-3xl border text-sm ${
-              isDark ? 'bg-[#12141C] border-white/10 text-gray-400' : 'bg-white border-slate-200 text-slate-500 shadow-xs'
-            }`}>
+            <div
+              className={`text-center py-12 rounded-3xl border text-sm ${
+                isDark
+                  ? 'bg-[#12141C] border-white/10 text-gray-400'
+                  : 'bg-white border-slate-200 text-slate-500 shadow-xs'
+              }`}
+            >
               No upcoming events currently scheduled for {club?.name || 'this club'}.
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {upcomingEvents.map((evt) => {
-                const dateParts = formatDateParts(evt.startAt || evt.startDate || evt.date);
+                const dateParts = formatDateParts(
+                  evt.startAt || evt.startDate || evt.date
+                );
+
                 return (
                   <div
                     key={evt.id}
@@ -262,34 +370,59 @@ const PublicClubDetailPage = () => {
                   >
                     <div>
                       <div className="flex items-center gap-3 mb-3">
-                        <div className={`w-12 h-12 rounded-xl border flex flex-col items-center justify-center font-['Syne',sans-serif] leading-none shrink-0 ${
-                          isDark ? 'bg-black border-white/20 text-white' : 'bg-slate-50 border-slate-200 text-slate-900'
-                        }`}>
-                          <span className="text-[9px] text-[#00F0FF] font-bold uppercase">{dateParts.month}</span>
-                          <span className="text-lg font-black">{dateParts.day}</span>
+                        <div
+                          className={`w-12 h-12 rounded-xl border flex flex-col items-center justify-center font-['Syne',sans-serif] leading-none shrink-0 ${
+                            isDark
+                              ? 'bg-black border-white/20 text-white'
+                              : 'bg-slate-50 border-slate-200 text-slate-900'
+                          }`}
+                        >
+                          <span className="text-[9px] text-[#00F0FF] font-bold uppercase">
+                            {dateParts.month}
+                          </span>
+
+                          <span className="text-lg font-black">
+                            {dateParts.day}
+                          </span>
                         </div>
+
                         <div>
-                          <h3 className={`font-['Syne',sans-serif] text-lg font-bold group-hover:text-[#00F0FF] transition-colors line-clamp-1 ${
-                            isDark ? 'text-white' : 'text-[#0F172A]'
-                          }`}>
+                          <h3
+                            className={`font-['Syne',sans-serif] text-lg font-bold group-hover:text-[#00F0FF] transition-colors line-clamp-1 ${
+                              isDark ? 'text-white' : 'text-[#0F172A]'
+                            }`}
+                          >
                             {evt.title}
                           </h3>
-                          <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>{evt.location || "Main Auditorium"}</span>
+
+                          <span
+                            className={`text-xs ${
+                              isDark ? 'text-gray-400' : 'text-slate-500'
+                            }`}
+                          >
+                            {evt.location || 'Main Auditorium'}
+                          </span>
                         </div>
                       </div>
 
-                      <p className={`text-xs line-clamp-2 leading-relaxed mb-4 ${
-                        isDark ? 'text-gray-300' : 'text-slate-600'
-                      }`}>
+                      <p
+                        className={`text-xs line-clamp-2 leading-relaxed mb-4 ${
+                          isDark ? 'text-gray-300' : 'text-slate-600'
+                        }`}
+                      >
                         {evt.description}
                       </p>
                     </div>
 
-                    <div className={`pt-3 border-t flex items-center justify-between text-xs font-bold text-[#00F0FF] ${
-                      isDark ? 'border-white/5' : 'border-slate-100'
-                    }`}>
+                    <div
+                      className={`pt-3 border-t flex items-center justify-between text-xs font-bold text-[#00F0FF] ${
+                        isDark ? 'border-white/5' : 'border-slate-100'
+                      }`}
+                    >
                       <span>RSVP Open</span>
-                      <span className="group-hover:translate-x-1 transition-transform">View Details →</span>
+                      <span className="group-hover:translate-x-1 transition-transform">
+                        View Details →
+                      </span>
                     </div>
                   </div>
                 );
@@ -300,75 +433,118 @@ const PublicClubDetailPage = () => {
 
         {/* Past Events & Gallery Section */}
         <section className="space-y-6 pt-6">
-          <div className={`flex items-center justify-between border-b pb-4 ${
-            isDark ? 'border-white/10' : 'border-slate-200'
-          }`}>
+          <div
+            className={`flex items-center justify-between border-b pb-4 ${
+              isDark ? 'border-white/10' : 'border-slate-200'
+            }`}
+          >
             <div>
-              <span className="text-xs font-extrabold uppercase text-purple-400">Archives</span>
-              <h2 className={`font-['Syne',sans-serif] text-2xl font-extrabold uppercase ${
-                isDark ? 'text-white' : 'text-[#0F172A]'
-              }`}>
+              <span className="text-xs font-extrabold uppercase text-purple-400">
+                Archives
+              </span>
+
+              <h2
+                className={`font-['Syne',sans-serif] text-2xl font-extrabold uppercase ${
+                  isDark ? 'text-white' : 'text-[#0F172A]'
+                }`}
+              >
                 Past Events & <span className="text-purple-500">Gallery</span>
               </h2>
             </div>
           </div>
 
-          {!pastLoading && !pastError && pastEvents.length === 0 && (
-            <div className={`text-center py-12 rounded-3xl border text-sm ${
-              isDark ? 'bg-[#12141C] border-white/10 text-gray-400' : 'bg-white border-slate-200 text-slate-500 shadow-xs'
-            }`}>
+          {pastLoading ? (
+            <div
+              className={`text-center py-12 text-sm ${
+                isDark ? 'text-gray-400' : 'text-slate-500'
+              }`}
+            >
+              Loading past events...
+            </div>
+          ) : pastError ? (
+            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 text-sm">
+              {pastError}
+            </div>
+          ) : pastEvents.length === 0 ? (
+            <div
+              className={`text-center py-12 rounded-3xl border text-sm ${
+                isDark
+                  ? 'bg-[#12141C] border-white/10 text-gray-400'
+                  : 'bg-white border-slate-200 text-slate-500 shadow-xs'
+              }`}
+            >
               No completed past events recorded yet.
             </div>
-          )}
-
-          {!pastLoading && !pastError && pastEvents.length > 0 && (
+          ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {pastEvents.map((evt) => (
-                <div
-                  key={evt.id}
-                  onClick={() => setActiveGalleryEvent(evt)}
-                  className={`group rounded-3xl overflow-hidden border transition-all duration-300 cursor-pointer flex flex-col justify-between ${
-                    isDark
-                      ? 'bg-[#12141C] border-white/10 hover:border-purple-400/50'
-                      : 'bg-white border-slate-200 hover:border-purple-400/60 shadow-xs hover:shadow-md'
-                  }`}
-                >
-                  <div className="relative h-44 w-full bg-gray-900 overflow-hidden">
-                    <img
-                      src={evt.coverImage?.url || evt.coverUrl || evt.bannerUrl || "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=600&auto=format&fit=crop"}
-                      alt={evt.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40 text-[10px] font-bold uppercase backdrop-blur-md">
-                      COMPLETED
+              {pastEvents.map((evt) => {
+                const eventImage =
+                  evt.coverImage?.url ||
+                  evt.coverUrl ||
+                  evt.bannerUrl ||
+                  DEFAULT_CLUB_IMAGE;
+
+                return (
+                  <div
+                    key={evt.id}
+                    onClick={() => setActiveGalleryEvent(evt)}
+                    className={`group rounded-3xl overflow-hidden border transition-all duration-300 cursor-pointer flex flex-col justify-between ${
+                      isDark
+                        ? 'bg-[#12141C] border-white/10 hover:border-purple-400/50'
+                        : 'bg-white border-slate-200 hover:border-purple-400/60 shadow-xs hover:shadow-md'
+                    }`}
+                  >
+                    <div className="relative h-44 w-full bg-gray-900 overflow-hidden">
+                      <img
+                        src={eventImage}
+                        alt={`${evt.title} cover`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = DEFAULT_CLUB_IMAGE;
+                        }}
+                      />
+
+                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40 text-[10px] font-bold uppercase backdrop-blur-md">
+                        COMPLETED
+                      </div>
+                    </div>
+
+                    <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                      <div>
+                        <h3
+                          className={`font-['Syne',sans-serif] text-lg font-bold group-hover:text-purple-400 transition line-clamp-1 ${
+                            isDark ? 'text-white' : 'text-[#0F172A]'
+                          }`}
+                        >
+                          {evt.title}
+                        </h3>
+
+                        <p
+                          className={`text-xs line-clamp-2 mt-1 ${
+                            isDark ? 'text-gray-400' : 'text-slate-500'
+                          }`}
+                        >
+                          {evt.description}
+                        </p>
+                      </div>
+
+                      <div
+                        className={`pt-3 border-t flex items-center justify-between text-xs font-bold text-purple-500 ${
+                          isDark ? 'border-white/5' : 'border-slate-100'
+                        }`}
+                      >
+                        <span>Completed Event</span>
+                        <span className="group-hover:underline">
+                          View Gallery →
+                        </span>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                    <div>
-                      <h3 className={`font-['Syne',sans-serif] text-lg font-bold group-hover:text-purple-400 transition line-clamp-1 ${
-                        isDark ? 'text-white' : 'text-[#0F172A]'
-                      }`}>
-                        {evt.title}
-                      </h3>
-                      <p className={`text-xs line-clamp-2 mt-1 ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>
-                        {evt.description}
-                      </p>
-                    </div>
-
-                    <div className={`pt-3 border-t flex items-center justify-between text-xs font-bold text-purple-500 ${
-                      isDark ? 'border-white/5' : 'border-slate-100'
-                    }`}>
-                      <span>Completed Event</span>
-                      <span className="group-hover:underline">View Gallery →</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>
-
       </div>
 
       {/* Lightbox Photo Gallery */}
