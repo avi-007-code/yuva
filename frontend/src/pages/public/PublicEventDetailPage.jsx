@@ -397,8 +397,19 @@ const PublicEventDetailPage = () => {
                     isDark ? 'bg-white/5 border-white/10' : 'bg-slate-50 border-slate-200'
                   }`}>
                     <div className="flex items-center gap-3 truncate">
-                      <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-500 border border-cyan-500/20 flex items-center justify-center shrink-0">
-                        <Building2 className="w-5 h-5" />
+                      <div className="w-10 h-10 rounded-xl overflow-hidden bg-cyan-500/10 border border-cyan-500/20 shrink-0">
+                        {(
+                          club?.logo?.url ||
+                          event.club?.logo?.url
+                        ) ? (
+                          <img
+                            src={club?.logo?.url || event.club?.logo?.url}
+                            alt={`${club?.name || event.club?.name || 'Club'} logo`}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <Building2 className="w-5 h-5 m-auto text-cyan-500" />
+                        )}
                       </div>
                       <div className="truncate">
                         <span className="block text-[10px] font-black uppercase tracking-wider text-gray-400">Host Club</span>
